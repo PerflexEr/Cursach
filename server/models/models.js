@@ -16,21 +16,23 @@ const Medicine = sequelize.define("Medicine", {
   cost: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
 });
 
-const FamilyMember = sequelize.define("FamilyMember", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, allowNull: false },
-  age: { type: DataTypes.INTEGER, allowNull: true },
-  status: { type: DataTypes.STRING, allowNull: true },
-});
 
 const Purchase = sequelize.define("Purchase", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   date_of_purchase: { type: DataTypes.DATE },
+  FamilyMemberId: { type: DataTypes.INTEGER }, 
 });
 
 const PurchaseMedicine = sequelize.define("PurchaseMedicine", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   quantity: { type: DataTypes.INTEGER, allowNull: false },
+});
+
+const FamilyMember = sequelize.define("FamilyMember", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: DataTypes.STRING, allowNull: false },
+  age: { type: DataTypes.INTEGER, allowNull: true },
+  status: { type: DataTypes.STRING, allowNull: true },
 });
 
 const MedicineUsage = sequelize.define("MedicineUsage", {

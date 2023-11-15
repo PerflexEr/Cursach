@@ -1,12 +1,8 @@
-const ApiError = require("../error/ApiError");
-const {
-  Medicine,
-  PurchaseMedicine,
-  MedicineUsage,
-} = require("../models/models");
-
+const { Medicine, PurchaseMedicine, MedicineUsage, Purchase } = require("../models/models");
 const { Sequelize, Op } = require("sequelize");
 const { literal, col } = Sequelize;
+const ApiError = require("../error/ApiError");
+
 
 class MedicineController {
   async addMedicine(req, res, next) {
@@ -53,15 +49,6 @@ class MedicineController {
     }
   }
 
-  async getExpiredMedicines(req, res, next) {
-    try {
-      const medicines = await Medicine.findAll();
-      return res.json(medicines);
-    } catch (error) {
-      return next(ApiError.internal("Ошибка при получении всех лекарств"));
-    }
-  }
-
   async getMedicinesByType(req, res, next) {
     const { type } = req.params;
     try {
@@ -74,74 +61,116 @@ class MedicineController {
     }
   }
 
-  async getMedicinesInInventory(req, res, next) {
+  async getExpiredMedicines(req, res, next) {
     try {
-      const medicinesInInventory = await Medicine.findAll({
+      const today = new Date();
+      const expiredMedicines = await Medicine.findAll({
+        where: {
+          expiration_date: {
+            [Op.lt]: today,
+          },
+        },
+      });
+      return res.json(expiredMedicines);
+    } catch (error) {
+      return next(
+        ApiError.internal("Ошибка при получении просроченных лекарств")
+      );
+    }
+  }
+
+  async getMedicinesInStock(req, res, next) {
+    try {
+      const medicinesInStock = await Medicine.findAll({
         attributes: [
-          "id",
-          "name",
-          "type",
-          "expiration_date",
-          "cost",
+          "*",
           [
             literal(
-              "(PurchaseMedicines.quantity - COALESCE(MedicineUsages.pills_used, 0))"
+              "(purchase_medicines.quantity - COALESCE(SUM(`MedicineUsages`.`quantity`), 0))"
             ),
-            "inventory",
+            "stock",
           ],
         ],
         include: [
           {
             model: PurchaseMedicine,
-            attributes: ["quantity"],
-            required: false,
+            attributes: [],
+            duplicating: false,
+            through: { attributes: [] },
           },
           {
             model: MedicineUsage,
-            attributes: [
-              [literal("SUM(MedicineUsages.pills_used)"), "pills_used"],
-            ],
-            required: false,
-            group: ["MedicineId"],
+            attributes: [],
+            duplicating: false,
           },
         ],
-        group: ["Medicine.id", "PurchaseMedicines.id", "MedicineUsages.id"],
+        group: ["Medicine.id"],
+        having: col("stock") > 0,
       });
-
-      return res.json(medicinesInInventory);
+      return res.json(medicinesInStock);
     } catch (error) {
-      return next(
-        ApiError.internal("Ошибка при получении лекарств в остатках")
-      );
+      return next(ApiError.internal("Ошибка при получении лекарств в остатке"));
     }
   }
 
-  async addMedicineThroughPurchase(req, res, next) {
-    const { medicineId, quantity, date_of_purchase } = req.body;
-    const { userId } = req.user; // Предположим, что у вас есть userId в объекте пользователя
+  async addPurchasedMedicine(req, res, next) {
+    const { medicines, FamilyMemberId } = req.body;
+    try {
+      const purchase = await Purchase.create({
+        date_of_purchase: new Date(),
+        FamilyMemberId: FamilyMemberId,
+      });
+
+      const purchaseMedicines = medicines.map((medicine) => ({
+        MedicineId: medicine.MedicineId,
+        quantity: medicine.quantity,
+      }));
+
+      await Promise.all(
+        purchaseMedicines.map(async (purchaseMedicine) => {
+          const { MedicineId, quantity } = purchaseMedicine;
+
+          const medicine = await Medicine.findByPk(MedicineId);
+
+          if (medicine) {
+            await purchase.addMedicine(medicine, {
+              through: { quantity },
+            });
+          }
+        })
+      );
+
+      return res.json({
+        purchase,
+        medicines: purchaseMedicines,
+      });
+    } catch (error) {
+      return next(ApiError.internal("Error adding purchased medicines"));
+    }
+  }
+  async getFamilyMemberPurchases(req, res, next) {
+    const { FamilyMemberId } = req.params;
 
     try {
-      // Создаем запись в таблице Purchase
-      const purchase = await Purchase.create({
-        date_of_purchase: date_of_purchase || new Date(),
-        userId: userId, // Предположим, что у вас есть внешний ключ userId в таблице Purchase
+      const purchases = await Purchase.findAll({
+        where: {
+          FamilyMemberId: FamilyMemberId,
+        },
+        include: [
+          {
+            model: Medicine,
+            through: { attributes: ["quantity"] },
+          },
+        ],
       });
 
-      // Создаем запись в таблице PurchaseMedicine
-      const purchaseMedicine = await PurchaseMedicine.create({
-        quantity,
-        medicineId,
-        purchaseId: purchase.id,
-      });
-
-      return res.json(purchaseMedicine);
+      return res.json({ purchases });
     } catch (error) {
       return next(
-        ApiError.internal("Ошибка при добавлении лекарства через покупку")
+        ApiError.internal("Error retrieving family member purchases")
       );
     }
   }
-
 }
 
 module.exports = new MedicineController();
