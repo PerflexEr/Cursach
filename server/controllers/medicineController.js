@@ -1,4 +1,4 @@
-const { Medicine, PurchaseMedicine, MedicineUsage, Purchase } = require("../models/models");
+const { Medicine, PurchaseMedicine, MedicineUsage, Purchase ,FamilyMember } = require("../models/models");
 const { Sequelize, Op } = require("sequelize");
 const { literal, col } = Sequelize;
 const ApiError = require("../error/ApiError");
@@ -79,37 +79,53 @@ class MedicineController {
     }
   }
 
-  async getMedicinesInStock(req, res, next) {
+  async getRemainingMedicines(req, res, next) {
+    const { FamilyMemberId } = req.params;
+
     try {
-      const medicinesInStock = await Medicine.findAll({
-        attributes: [
-          "*",
-          [
-            literal(
-              "(purchase_medicines.quantity - COALESCE(SUM(`MedicineUsages`.`quantity`), 0))"
-            ),
-            "stock",
-          ],
-        ],
+      // Найти все покупки для указанного члена семьи
+      const purchases = await Purchase.findAll({
+        where: {
+          FamilyMemberId: FamilyMemberId,
+        },
         include: [
           {
-            model: PurchaseMedicine,
-            attributes: [],
-            duplicating: false,
-            through: { attributes: [] },
-          },
-          {
-            model: MedicineUsage,
-            attributes: [],
-            duplicating: false,
+            model: Medicine,
+            through: { attributes: ["quantity"] },
           },
         ],
-        group: ["Medicine.id"],
-        having: col("stock") > 0,
       });
-      return res.json(medicinesInStock);
+
+      // Обработка данных о лекарствах в остатке
+      const remainingMedicines = [];
+      purchases.forEach((purchase) => {
+        purchase.Medicines.forEach((medicine) => {
+          const purchasedQuantity =
+            purchase.MedicinePurchases.find((p) => p.MedicineId === medicine.id)
+              ?.quantity || 0;
+          const usedQuantity = medicine.MedicinePurchases.reduce(
+            (total, p) => total + p.quantity,
+            0
+          );
+          const remainingQuantity = purchasedQuantity - usedQuantity;
+
+          if (
+            remainingQuantity !== 0 &&
+            remainingQuantity !== purchasedQuantity
+          ) {
+            remainingMedicines.push({
+              medicine,
+              purchasedQuantity,
+              usedQuantity,
+              remainingQuantity,
+            });
+          }
+        });
+      });
+
+      return res.json({ remainingMedicines });
     } catch (error) {
-      return next(ApiError.internal("Ошибка при получении лекарств в остатке"));
+      return next(ApiError.internal("Error retrieving remaining medicines"));
     }
   }
 
@@ -171,6 +187,7 @@ class MedicineController {
       );
     }
   }
+
 }
 
 module.exports = new MedicineController();

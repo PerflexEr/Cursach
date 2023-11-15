@@ -37,9 +37,7 @@ const FamilyMember = sequelize.define("FamilyMember", {
 
 const MedicineUsage = sequelize.define("MedicineUsage", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  volume_used: { type: DataTypes.INTEGER, allowNull: false },
   pills_used: { type: DataTypes.INTEGER, allowNull: false },
-  period_of_illness: { type: DataTypes.INTEGER, allowNull: false },
   result: { type: DataTypes.STRING },
   comments: { type: DataTypes.TEXT },
 });

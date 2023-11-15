@@ -10,7 +10,7 @@ router.post("/add", medicineController.addMedicine);
 router.get("/expired", medicineController.getExpiredMedicines);
 
 // Получение лекарств в остатках
-router.get("/inventory", medicineController.getMedicinesInStock);
+router.get("/inventory", medicineController.getRemainingMedicines);
 
 // Добавление купленных лекарств лекарств в остатках
 router.post("/purchase", medicineController.addPurchasedMedicine);
