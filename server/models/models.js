@@ -23,8 +23,6 @@ const FamilyMember = sequelize.define("FamilyMember", {
   status: { type: DataTypes.STRING, allowNull: true },
 });
 
-
-
 const Purchase = sequelize.define("Purchase", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   date_of_purchase: { type: DataTypes.DATE },
