@@ -38,7 +38,6 @@ const FamilyMember = sequelize.define("FamilyMember", {
 const MedicineUsage = sequelize.define("MedicineUsage", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   pills_used: { type: DataTypes.INTEGER, allowNull: false },
-  result: { type: DataTypes.STRING },
   comments: { type: DataTypes.TEXT },
 });
 
@@ -50,6 +49,7 @@ const IllnessPrescription = sequelize.define("IllnessPrescription", {
   medications: { type: DataTypes.TEXT },
   prescribed_by: { type: DataTypes.STRING, allowNull: false },
   amount_of_prescriptions: { type: DataTypes.INTEGER, allowNull: false },
+  result: { type: DataTypes.STRING },
   note: { type: DataTypes.TEXT },
 });
 
@@ -64,6 +64,9 @@ Purchase.hasOne(MedicineUsage);
 MedicineUsage.belongsTo(Purchase);
 
 FamilyMember.hasMany(IllnessPrescription);
+IllnessPrescription.belongsTo(FamilyMember);
+
+IllnessPrescription.belongsTo(MedicineUsage); 
 IllnessPrescription.belongsTo(FamilyMember);
 
 module.exports = {

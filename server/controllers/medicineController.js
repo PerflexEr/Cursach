@@ -164,29 +164,6 @@ class MedicineController {
       return next(ApiError.internal("Error adding purchased medicines"));
     }
   }
-  async getFamilyMemberPurchases(req, res, next) {
-    const { FamilyMemberId } = req.params;
-
-    try {
-      const purchases = await Purchase.findAll({
-        where: {
-          FamilyMemberId: FamilyMemberId,
-        },
-        include: [
-          {
-            model: Medicine,
-            through: { attributes: ["quantity"] },
-          },
-        ],
-      });
-
-      return res.json({ purchases });
-    } catch (error) {
-      return next(
-        ApiError.internal("Error retrieving family member purchases")
-      );
-    }
-  }
 
 }
 

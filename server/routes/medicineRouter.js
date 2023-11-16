@@ -12,11 +12,11 @@ router.get("/expired", medicineController.getExpiredMedicines);
 // Получение лекарств в остатках
 router.get("/inventory", medicineController.getRemainingMedicines);
 
+// Получение лекарства по ID
+router.get("/:id", medicineController.getMedicineById);
+
 // Добавление купленных лекарств лекарств в остатках
 router.post("/purchase", medicineController.addPurchasedMedicine);
-
-// Получение купленных лекарств по идентификатору члена семьи
-router.get("/purchase/:FamilyMemberId", medicineController.getFamilyMemberPurchases);
 
 // Получение лекарств по определенному типу
 router.get("/type/:type", medicineController.getMedicinesByType);
@@ -27,8 +27,7 @@ router.delete("/:id", medicineController.deleteMedicineById);
 // Получение всех лекарств
 router.get("/", medicineController.getAllMedicines);
 
-// Получение лекарства по ID
-router.get("/:id", medicineController.getMedicineById);
+
 
 
 module.exports = router;

@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { FamilyMember, sequelize } = require("../models/models");
+const { FamilyMember , PurchaseMedicine , Purchase , Medicine, MedicineUsage} = require("../models/models");
 const ApiError = require("../error/ApiError");
+const sequelize = require("sequelize");
+const { Op } = require("sequelize");
+const { literal, col, fn } = sequelize;
 
 class familyMemberController {
   async addFamilyMember(req, res, next) {
@@ -19,7 +22,7 @@ class familyMemberController {
       return next(ApiError.internal("Error adding a family member"));
     }
   }
-  
+
   async getAllFamilyMembers(req, res, next) {
     try {
       const familyMembers = await FamilyMember.findAll();
@@ -47,6 +50,64 @@ class familyMemberController {
       return res.json(deleteFamilyMember);
     } catch (error) {
       return next(ApiError.internal("Ошибка при удалении члена семьи"));
+    }
+  }
+
+  async getFamilyMemberWithHighestCost(req, res, next) {
+    try {
+      const familyMemberCosts = await FamilyMember.findAll({
+        attributes: [
+          "id",
+          "name",
+          [
+            sequelize.fn(
+              "SUM",
+              sequelize.col(
+                "Purchases.MedicineUsages.PurchaseMedicines.Medicine.cost"
+              )
+            ),
+            "total_cost",
+          ],
+        ],
+        include: [
+          {
+            model: Purchase,
+            include: [
+              {
+                model: MedicineUsage,
+                include: [
+                  {
+                    model: PurchaseMedicine,
+                    include: [
+                      {
+                        model: Medicine,
+                        attributes: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        group: ["FamilyMember.id"],
+        order: [
+          [
+            sequelize.fn(
+              "SUM",
+              sequelize.col(
+                "Purchases.MedicineUsages.PurchaseMedicines.Medicine.cost"
+              )
+            ),
+            "DESC",
+          ],
+        ],
+        limit: 1,
+      });
+
+      return res.json(familyMemberCosts);
+    } catch (error) {
+      return next(ApiError.internal("Ошибка при поиске"));
     }
   }
 }
