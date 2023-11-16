@@ -5,6 +5,7 @@ const { literal, col } = sequelize;
 const ApiError = require("../error/ApiError");
 
 class MedicineUsageController {
+
   async addMedicineUsage(req, res, next) {
     try {
       const { pills_used, result, comments, PurchaseId } = req.body;

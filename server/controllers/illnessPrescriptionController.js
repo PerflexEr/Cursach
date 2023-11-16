@@ -1,4 +1,4 @@
-const { Medicine, PurchaseMedicine, MedicineUsage, Purchase ,FamilyMember,IllnessPrescription } = require("../models/models");
+const { MedicineUsage, Purchase ,FamilyMember,IllnessPrescription } = require("../models/models");
 const ApiError = require("../error/ApiError");
 
 class IllnessPrescriptionController {
@@ -28,6 +28,7 @@ class IllnessPrescriptionController {
         MedicineUsageId,
       } = req.body;
 
+      // Create a new IllnessPrescription
       const newIllnessPrescription = await IllnessPrescription.create({
         diagnosis,
         reason_for_medications,
@@ -41,7 +42,19 @@ class IllnessPrescriptionController {
         MedicineUsageId,
       });
 
-      return res.json(newIllnessPrescription);
+      // Find the associated FamilyMember
+      const familyMember = await FamilyMember.findByPk(FamilyMemberId);
+
+      // Associate IllnessPrescription with FamilyMember
+      await newIllnessPrescription.setFamilyMember(familyMember);
+
+      // Find the associated MedicineUsage
+      const medicineUsage = await MedicineUsage.findByPk(MedicineUsageId);
+
+      // Associate IllnessPrescription with MedicineUsage
+      await newIllnessPrescription.setMedicineUsage(medicineUsage);
+
+      return res.status(201).json(newIllnessPrescription);
     } catch (error) {
       return next(ApiError.internal("Error adding illness prescription"));
     }
