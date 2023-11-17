@@ -1,11 +1,10 @@
-const { Medicine, PurchaseMedicine, MedicineUsage, Purchase } = require("../models/models");
+const { Medicine, PurchaseMedicine, MedicineUsage, Purchase ,IllnessPrescription } = require("../models/models");
 const sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const { literal, col } = sequelize;
 const ApiError = require("../error/ApiError");
 
 class MedicineUsageController {
-
   async addMedicineUsage(req, res, next) {
     try {
       const { pills_used, result, comments, PurchaseId } = req.body;
@@ -40,12 +39,8 @@ class MedicineUsageController {
 
   async getRemainingMedicines(req, res, next) {
     try {
-      const remainingMedicines = await PurchaseMedicine.findAll({
-        attributes: [
-          "MedicineId",
-          [sequelize.fn("SUM", sequelize.col("quantity")), "total_quantity"],
-        ],
-        group: ["MedicineId"],
+      const remainingMedicines = await IllnessPrescription.findAll({
+        
       });
 
       return res.json(remainingMedicines);

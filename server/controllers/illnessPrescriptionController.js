@@ -28,7 +28,12 @@ class IllnessPrescriptionController {
         MedicineUsageId,
       } = req.body;
 
-      // Create a new IllnessPrescription
+      // Валидация данных
+      if (!diagnosis || !prescribed_by || !amount_of_prescriptions) {
+        return next(ApiError.badRequest("Missing required fields"));
+      }
+
+      // Создаем новую запись в таблице IllnessPrescription
       const newIllnessPrescription = await IllnessPrescription.create({
         diagnosis,
         reason_for_medications,
@@ -42,20 +47,10 @@ class IllnessPrescriptionController {
         MedicineUsageId,
       });
 
-      // Find the associated FamilyMember
-      const familyMember = await FamilyMember.findByPk(FamilyMemberId);
-
-      // Associate IllnessPrescription with FamilyMember
-      await newIllnessPrescription.setFamilyMember(familyMember);
-
-      // Find the associated MedicineUsage
-      const medicineUsage = await MedicineUsage.findByPk(MedicineUsageId);
-
-      // Associate IllnessPrescription with MedicineUsage
-      await newIllnessPrescription.setMedicineUsage(medicineUsage);
-
-      return res.status(201).json(newIllnessPrescription);
+      // Возвращаем созданный объект болезни
+      return res.json(newIllnessPrescription);
     } catch (error) {
+      console.error("Error adding illness prescription:", error.message);
       return next(ApiError.internal("Error adding illness prescription"));
     }
   }
