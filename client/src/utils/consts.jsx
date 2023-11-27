@@ -1,0 +1,7 @@
+export const ADMIN_ROUTE = '/admin'
+export const LOGIN_ROUTE = '/login'
+export const MEDICINE_ROUTE = '/medicines'
+export const ILLNES_ROUTE = '/illnes'
+export const FAMILY_ROUTE = '/familymember'
+export const MEDICINE_USAGE_ROUTE = '/medicine-usage'
+export const STATISTICS_ROUTE = '/'
