@@ -38,16 +38,38 @@ class MedicineUsageController {
   }
 
   async getRemainingMedicines(req, res, next) {
-    try {
-      const remainingMedicines = await IllnessPrescription.findAll({
-        
-      });
+  try {
+    const remainingMedicines = await IllnessPrescription.findAll({
+      attributes: [
+        [sequelize.literal('"MedicineId"'), "MedicineId"],
+        [
+          sequelize.literal('SUM("amount_of_prescriptions" - "pills_used")'),
+          "remaining_quantity",
+        ],
+      ],
+      include: [
+        {
+          model: MedicineUsage,
+          attributes: [],
+          required: true,
+        },
+        {
+          model: Purchase,
+          attributes: ["id"],
+          through: {
+            attributes: ["quantity"],
+          },
+          required: true,
+        },
+      ],
+      group: ["MedicineId"],
+    });
 
-      return res.json(remainingMedicines);
-    } catch (error) {
-      return next(ApiError.internal("Error retrieving remaining medicines"));
-    }
+    return res.json(remainingMedicines);
+  } catch (error) {
+    return next(ApiError.internal("Error retrieving remaining medicines"));
   }
+}
 }
 
 module.exports = new MedicineUsageController();
