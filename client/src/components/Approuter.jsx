@@ -6,8 +6,6 @@ import { observer } from 'mobx-react-lite';
 const AppRouter = observer(
      () => {
     const { user } = useContext(Context);
-    console.log(user._isAuth);
-
     return (
         <Routes>
             {user._isAuth === true &&
