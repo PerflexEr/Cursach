@@ -65,20 +65,20 @@ const NavBar = observer(() => {
                                 color="inherit"
                                 onClick={() => navigate(ADMIN_ROUTE)}
                             >
-                                Админ панель
+                                Admin panel
                             </Button>
                             <Button
                                 color="inherit"
                                 onClick={() => logOut()}
                                 style={{ marginLeft: '10px' }}
                             >
-                                Выйти
+                                Log out
                             </Button>
                         </div>
                         :
                         <div style={{ marginLeft: 'auto' }}>
                             <Button color="inherit" onClick={() => navigate(LOGIN_ROUTE)}>
-                                Авторизация
+                                Authorization
                             </Button>
                         </div>
                     }

@@ -25,16 +25,20 @@ export const publicRoutes  = [
         Component: Auth
     },
     {
-        path: LOGIN_ROUTE,
-        Component: Auth
-    },
-    {
         path: REGISTRATION_ROUTE,
         Component: Auth
     },
     {
+        path: MEDICINE_ROUTE,
+        Component: Medicines
+    },
+    {
         path: FAMILY_ROUTE,
         Component: FamilyMember
+    },
+    {
+        path: ILLNES_ROUTE,
+        Component: Illnesses
     },
     {
         path: MEDICINE_USAGE_ROUTE,
