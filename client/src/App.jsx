@@ -5,7 +5,7 @@ import {observer} from "mobx-react-lite";
 import {Context} from "./index";
 import CssBaseline from '@mui/material/CssBaseline';
 import { AppThemeProvider } from './provider/theme-provider';
-// import {check} from "./http/userAPI";
+import {check} from "./services/userAPI";
 import NavBar from './components/NavBar';
 const App = observer(() => {
     return (
@@ -14,7 +14,7 @@ const App = observer(() => {
                 <BrowserRouter>
                 <CssBaseline />
                     <NavBar/>
-                    <AppRouter />
+                    <AppRouter/>
                 </BrowserRouter>
             </AppThemeProvider>
         </React.Fragment>

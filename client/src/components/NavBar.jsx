@@ -59,7 +59,7 @@ const NavBar = observer(() => {
                             </Typography>
                         </Link>
                      </Box>
-                    {user.isAuth ?
+                    {user._isAuth ?
                         <div style={{ marginLeft: 'auto' }}>
                             <Button
                                 color="inherit"

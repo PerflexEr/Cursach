@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Container, Card, TextField, Button, Grid, Box } from '@mui/material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LOGIN_ROUTE, REGISTRATION_ROUTE, STATISTICS_ROUTE } from '../utils/consts';
+import { ADMIN_ROUTE, LOGIN_ROUTE, MEDICINE_ROUTE, REGISTRATION_ROUTE, STATISTICS_ROUTE } from '../utils/consts';
 import { login, registration } from '../services/userAPI';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
@@ -24,7 +24,8 @@ const Auth = observer(() => {
       }
       user.setUser(user);
       user.setIsAuth(true);
-      navigate(STATISTICS_ROUTE);
+      console.log(user);
+      navigate(ADMIN_ROUTE)
     } catch (e) {
       alert(e.response.data.message);
     }
