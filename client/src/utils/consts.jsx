@@ -1,5 +1,6 @@
 export const ADMIN_ROUTE = '/admin'
 export const LOGIN_ROUTE = '/login'
+export const REGISTRATION_ROUTE = '/registration'
 export const MEDICINE_ROUTE = '/medicines'
 export const ILLNES_ROUTE = '/illnes'
 export const FAMILY_ROUTE = '/family-member'

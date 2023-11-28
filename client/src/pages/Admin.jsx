@@ -26,7 +26,7 @@ const Admin = () => {
     diagnosis: '',
     reason_for_medications: '',
     period_of_illness: '',
-    medications: 0,
+    medications: '',
     prescribed_by: '',
     amount_of_prescriptions: 0,
     result: '',
@@ -65,7 +65,7 @@ const Admin = () => {
 
   const handleAddIllness = () => {
     // Логика добавления истории болезни
-    console.log('Adding Illness:', illnessData);
+    console.log('Adding Illness:', illnessData , medicineUsageData);
   };
 
   const handleAddMedicineUsage = () => {
@@ -85,8 +85,6 @@ const Admin = () => {
                 <Tab label="Add Family Member" style={{ color: 'white' }} />
                 <Tab label="Add Medicine" style={{ color: 'white' }} />
                 <Tab label="Add Illness" style={{ color: 'white' }} />
-                <Tab label="Add Medicine Usage" style={{ color: 'white' }} />
-                <Tab label="Add Purchase" style={{ color: 'white' }} />
             </Tabs>
         </AppBar>
       <TabPanel value={tabValue} index={0} >
@@ -177,11 +175,22 @@ const Admin = () => {
             />
             </Box>
             <TextField
-            label="Medications"
+            select
+            label={`Medicine used`}
             variant="outlined"
-            type="number"  
             value={illnessData.medications}
             onChange={(e) => setIllnessData({ ...illnessData, medications: e.target.value })}
+            >
+            <MenuItem value="Xanax">Xanax</MenuItem>
+            <MenuItem value="Lirika">Lirika</MenuItem>
+            <MenuItem value="Benozepam">Benozepam</MenuItem>
+            </TextField>
+            <TextField
+            label="Amount of pills"
+            variant="outlined"
+            type="number"
+            value={familyMemberData.age}
+            onChange={(e) => setMedicineUsageData({ ...medicineUsageData, pills_used: e.target.value })}
             />
             <TextField
             select

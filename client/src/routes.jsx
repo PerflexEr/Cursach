@@ -1,5 +1,5 @@
 
-import {ADMIN_ROUTE,LOGIN_ROUTE , MEDICINE_ROUTE, ILLNES_ROUTE, FAMILY_ROUTE, MEDICINE_USAGE_ROUTE , STATISTICS_ROUTE} from "./utils/consts";
+import {ADMIN_ROUTE,LOGIN_ROUTE , MEDICINE_ROUTE, ILLNES_ROUTE, FAMILY_ROUTE, MEDICINE_USAGE_ROUTE , STATISTICS_ROUTE , REGISTRATION_ROUTE} from "./utils/consts";
 
 import Admin from "./pages/Admin";
 
@@ -25,12 +25,12 @@ export const publicRoutes  = [
         Component: Auth
     },
     {
-        path: MEDICINE_ROUTE,
-        Component: Medicines
+        path: LOGIN_ROUTE,
+        Component: Auth
     },
     {
-        path: ILLNES_ROUTE,
-        Component: Illnesses
+        path: REGISTRATION_ROUTE,
+        Component: Auth
     },
     {
         path: FAMILY_ROUTE,
