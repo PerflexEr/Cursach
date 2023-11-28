@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, AppBar, Tabs, Tab, Typography, Box, TextField, Button, InputLabel , MenuItem} from '@mui/material';
+import { Container, AppBar, Tabs, Tab, Typography, Box, TextField, Button, InputLabel , MenuItem , useMediaQuery, useTheme } from '@mui/material';
 
 // import AddCircleIcon from '@mui/material';
 
@@ -77,11 +77,19 @@ const Admin = () => {
     // Логика добавления списка купленных лекарств
     console.log('Adding Purchase:', purchaseData);
   };
+  
+const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
     <Container>
-        <AppBar position="static" sx={{marginTop: '20px' , borderRadius: '10px'}}>
-            <Tabs value={tabValue} onChange={handleTabChange}>
+         <AppBar position="static" sx={{ marginTop: '20px', borderRadius: '10px' }}>
+            <Tabs
+                value={tabValue}
+                onChange={handleTabChange}
+                variant={isSmallScreen ? 'fullWidth' : 'standard'}
+                centered={!isSmallScreen}
+            >
                 <Tab label="Add Family Member" style={{ color: 'white' }} />
                 <Tab label="Add Medicine" style={{ color: 'white' }} />
                 <Tab label="Add Illness" style={{ color: 'white' }} />
