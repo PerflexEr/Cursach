@@ -31,14 +31,18 @@ const Auth = observer(() => {
   };
 
   return (
-    <Box margin={'5% 33%'}>
-        <Container
-      className="d-flex justify-content-center align-items-center"
-      style={{ height: window.innerHeight - 54, textAlign: 'center'}}
+    <Box
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '30px',
+        padding: '0 20px'
+      }}
     >
-      <Card style={{ width: 600, padding: '20px' }} className="p-5">
+      <Card style={{ maxWidth: 600, width: '100%', padding: '20px' }} className="p-5">
         <h2 className="m-auto">{isLogin ? 'Authorization' : 'Registration'}</h2>
-        <form className="d-flex flex-column" style={{display: 'flex' , flexDirection: 'column' , gap: "20px"}}>
+        <form className="d-flex flex-column" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <TextField
             className="mt-3"
             label="Input your email..."
@@ -57,20 +61,19 @@ const Auth = observer(() => {
           <Grid container justifyContent="space-between" className="mt-3 pl-3 pr-3">
             {isLogin ? (
               <div>
-                No account? <Link to={REGISTRATION_ROUTE}>Registarion!</Link>
+                No account? <Link to={REGISTRATION_ROUTE}>Registration!</Link>
               </div>
             ) : (
               <div>
-                Have an account ? <Link to={LOGIN_ROUTE}>Log in!</Link>
+                Have an account? <Link to={LOGIN_ROUTE}>Log in!</Link>
               </div>
             )}
-            <Button variant="outlined"  onClick={click}> 
-              {isLogin ? 'Log in' : 'Registrate'}
+            <Button variant="outlined" onClick={click}>
+              {isLogin ? 'Log in' : 'Register'}
             </Button>
           </Grid>
         </form>
       </Card>
-    </Container>
     </Box>
   );
 });
