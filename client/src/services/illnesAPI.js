@@ -1,4 +1,4 @@
-import { $authHost, $host } from "./index";
+import {  $host } from "./index";
 
 export const addillnes = async ({
   diagnosis,

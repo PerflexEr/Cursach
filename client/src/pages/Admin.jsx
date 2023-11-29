@@ -12,7 +12,6 @@ import {
   MenuItem,
   useMediaQuery,
   useTheme,
-  Select,
 } from "@mui/material";
 
 // import AddCircleIcon from '@mui/material';
@@ -95,8 +94,7 @@ const Admin = observer(() => {
 
   const handleAddFamilyMember = async () => {
     try {
-      let data;
-      data = await addFamilyMember(familyMemberData);
+      await addFamilyMember(familyMemberData);
     } catch (e) {
       alert(e.response.data.message);
     }
@@ -105,8 +103,7 @@ const Admin = observer(() => {
 
   const handleAddMedicine = async () => {
     try {
-      let data;
-      data = await addMedicine(medicineData);
+      await addMedicine(medicineData);
     } catch (e) {
       alert(e.response.data.message);
     }
@@ -115,8 +112,7 @@ const Admin = observer(() => {
 
   const handleAddIllness = async () => {
     try {
-      let data;
-      data = await addillnes(illnessData);
+      await addillnes(illnessData);
     } catch (e) {
       alert(e.response.data.message);
     }
@@ -463,7 +459,7 @@ const Admin = observer(() => {
   );
 });
 
-const TabPanel = (props) => {
+const TabPanel = observer((props) => {
   const { children, value, index, ...other } = props;
 
   return (
@@ -478,6 +474,6 @@ const TabPanel = (props) => {
       {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
-};
+});
 
 export default Admin;
