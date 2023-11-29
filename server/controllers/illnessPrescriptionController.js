@@ -1,4 +1,4 @@
-const { MedicineUsage, Purchase ,FamilyMember,IllnessPrescription } = require("../models/models");
+const { IllnessPrescription } = require("../models/models");
 const ApiError = require("../error/ApiError");
 
 class IllnessPrescriptionController {
@@ -19,17 +19,16 @@ class IllnessPrescriptionController {
         diagnosis,
         reason_for_medications,
         period_of_illness,
-        medications,
         prescribed_by,
-        amount_of_prescriptions,
+        amount_of_pills,
         result,
         note,
         FamilyMemberId,
-        MedicineUsageId,
+        MedicineId, 
       } = req.body;
 
       // Валидация данных
-      if (!diagnosis || !prescribed_by || !amount_of_prescriptions) {
+      if (!diagnosis || !prescribed_by || !amount_of_pills) {
         return next(ApiError.badRequest("Missing required fields"));
       }
 
@@ -38,13 +37,12 @@ class IllnessPrescriptionController {
         diagnosis,
         reason_for_medications,
         period_of_illness,
-        medications,
         prescribed_by,
-        amount_of_prescriptions,
+        amount_of_pills,
         result,
         note,
         FamilyMemberId,
-        MedicineUsageId,
+        MedicineId,
       });
 
       // Возвращаем созданный объект болезни

@@ -46,9 +46,8 @@ const IllnessPrescription = sequelize.define("IllnessPrescription", {
   diagnosis: { type: DataTypes.STRING, allowNull: false },
   reason_for_medications: { type: DataTypes.TEXT },
   period_of_illness: { type: DataTypes.DATE },
-  medications: { type: DataTypes.INTEGER, allowNull: false },
   prescribed_by: { type: DataTypes.STRING, allowNull: false },
-  amount_of_prescriptions: { type: DataTypes.INTEGER, allowNull: false },
+  amount_of_pills: { type: DataTypes.INTEGER, allowNull: false },
   result: { type: DataTypes.STRING },
   note: { type: DataTypes.TEXT },
 });
@@ -66,7 +65,7 @@ MedicineUsage.belongsTo(Purchase);
 FamilyMember.hasMany(IllnessPrescription);
 IllnessPrescription.belongsTo(FamilyMember);
 
-IllnessPrescription.belongsTo(MedicineUsage); 
+IllnessPrescription.belongsTo(Medicine); 
 IllnessPrescription.belongsTo(FamilyMember);
 
 FamilyMember.hasMany(Medicine); 

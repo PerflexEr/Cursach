@@ -11,15 +11,6 @@ export default class FamilyStore {
     this.getNamesList();
     this.getIdAndNamesList();
   }
-
-  setFamilyMembers(members) {
-    this._familyMembers = members;
-  }
-
-  get familyMembers() {
-    return this._familyMembers;
-  }
-
   
   async fetchFamilyMembers() {
     try {

@@ -23,18 +23,25 @@ import { Context } from "../index";
 
 import { medications } from "../utils/medications";
 import { medicationTypes } from "../utils/medications";
+import { addillnes } from "../services/illnesAPI";
 
-const Admin = () => {
+
+const Admin = observer(() => {
   const { familyMembers } = useContext(Context);
+  const { medicines } = useContext(Context)
+  const {illnes} = useContext(Context)
 
   useEffect(() => {
     familyMembers.fetchFamilyMembers();
-  }, [familyMembers]);
+    medicines.fetchMedicines()
+  }, [familyMembers, medicines]);
 
   const familyMembersWithIdAndName = familyMembers._familyMembersWithIdAndName
+  const medicinesWithIdAndName = medicines._medicinesWithIdAndName
 
   console.log(familyMembersWithIdAndName);
-
+  console.log(medicines);
+  console.log(illnes);
   const [tabValue, setTabValue] = useState(0);
   
   
@@ -57,16 +64,15 @@ const Admin = () => {
 
   // State для истории болезни
   const [illnessData, setIllnessData] = useState({
-    diagnosis: "",
-    reason_for_medications: "",
-    period_of_illness: "",
-    medications: "",
-    prescribed_by: "",
-    amount_of_prescriptions: 0,
-    result: "",
-    note: "",
-    FamilyMemberId: 0,
-    MedicineUsageId: 0,
+    "diagnosis": "",
+    "reason_for_medications": "",
+    "period_of_illness": "",
+    "prescribed_by": "",
+    "amount_of_pills": "",
+    "result": "",
+    "note": "",
+    "FamilyMemberId": "",
+    "MedicineId": "",
   });
 
   // State для использования лекарства
@@ -107,9 +113,14 @@ const Admin = () => {
     console.log("Adding Medicine:", medicineData);
   };
 
-  const handleAddIllness = () => {
-    // Логика добавления истории болезни
-    console.log("Adding Illness:", illnessData, medicineUsageData);
+  const handleAddIllness = async () => {
+    try {
+      let data;
+      data = await addillnes(illnessData);
+    } catch (e) {
+      alert(e.response.data.message);
+    }
+    console.log("Adding Illness:", illnessData);
   };
 
   const handleAddMedicineUsage = () => {
@@ -258,7 +269,7 @@ const Admin = () => {
                     {member.name}
                     </MenuItem>
                 ))}
-            </TextField>
+              </TextField>
               <Button
                 variant="contained"
                 color="primary"
@@ -310,30 +321,47 @@ const Admin = () => {
             />
           </Box>
           <TextField
-            select
-            label={`Medicine used`}
-            variant="outlined"
-            value={illnessData.medications}
-            onChange={(e) =>
-              setIllnessData({ ...illnessData, medications: e.target.value })
-            }
-          >
-            <MenuItem value="Xanax">Xanax</MenuItem>
-            <MenuItem value="Lirika">Lirika</MenuItem>
-            <MenuItem value="Benozepam">Benozepam</MenuItem>
+              select
+              label="Select Family Member"
+              variant="outlined"
+              value={illnessData.FamilyMemberId}
+              onChange={(e) =>
+                setIllnessData({ ...illnessData, FamilyMemberId: e.target.value })
+              }
+              >
+              {familyMembersWithIdAndName.map((member) => (
+                  <MenuItem key={member.id} value={member.id}>
+                  {member.name}
+                  </MenuItem>
+              ))}
+          </TextField>
+            <TextField
+              select
+              label="Select Medicine"
+              variant="outlined"
+              value={illnessData.MedicineId}
+              onChange={(e) =>
+                setIllnessData({ ...illnessData, MedicineId: e.target.value })
+              }
+              >
+              {medicinesWithIdAndName.map((medicine) => (
+                  <MenuItem key={medicine.id} value={medicine.id}>
+                  {medicine.name}
+                  </MenuItem>
+              ))}
           </TextField>
           <TextField
-            label="Amount of pills"
-            variant="outlined"
-            type="number"
-            value={familyMemberData.age}
-            onChange={(e) =>
-              setMedicineUsageData({
-                ...medicineUsageData,
-                pills_used: e.target.value,
-              })
-            }
-          />
+              variant="outlined"
+              type="number"
+              label="Amount of Pills"
+              value={illnessData.amount_of_pills}
+              onChange={(e) =>
+                setIllnessData({
+                  ...illnessData,
+                  amount_of_pills: e.target.value,
+                })
+              }
+            />
           <TextField
             select
             label={`Presctibed by`}
@@ -391,8 +419,8 @@ const Admin = () => {
             value={medicineUsageData.pills_used}
             onChange={(e) =>
               setMedicineUsageData({
-                ...medicineUsageData,
-                pills_used: e.target.value,
+                ...illnessData,
+                amount_of_pills: e.target.value,
               })
             }
           />
@@ -433,7 +461,7 @@ const Admin = () => {
       </TabPanel>
     </Container>
   );
-};
+});
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
