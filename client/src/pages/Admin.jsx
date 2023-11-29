@@ -26,15 +26,18 @@ import { medicationTypes } from "../utils/medications";
 
 const Admin = () => {
   const { familyMembers } = useContext(Context);
+
   useEffect(() => {
     familyMembers.fetchFamilyMembers();
   }, [familyMembers]);
 
-  console.log(familyMembers._familyMembersNames);
+  const familyMembersWithIdAndName = familyMembers._familyMembersWithIdAndName
+
+  console.log(familyMembersWithIdAndName);
 
   const [tabValue, setTabValue] = useState(0);
   
-  const familyMembersNames = familyMembers._familyMembersNames
+  
   // State для члена семьи
   const [familyMemberData, setFamilyMemberData] = useState({
     name: "",
@@ -49,6 +52,7 @@ const Admin = () => {
     type: "",
     expirationDate: "",
     cost: "",
+    FamilyMemberId: ""
   });
 
   // State для истории болезни
@@ -240,6 +244,21 @@ const Admin = () => {
                   setMedicineData({ ...medicineData, cost: e.target.value })
                 }
               />
+              <TextField
+                select
+                label="Select Family Member"
+                variant="outlined"
+                value={medicineData.FamilyMemberId}
+                onChange={(e) =>
+                  setMedicineData({ ...medicineData, FamilyMemberId: e.target.value })
+                }
+                >
+                {familyMembersWithIdAndName.map((member) => (
+                    <MenuItem key={member.id} value={member.id}>
+                    {member.name}
+                    </MenuItem>
+                ))}
+            </TextField>
               <Button
                 variant="contained"
                 color="primary"

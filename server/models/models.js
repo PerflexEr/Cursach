@@ -69,6 +69,9 @@ IllnessPrescription.belongsTo(FamilyMember);
 IllnessPrescription.belongsTo(MedicineUsage); 
 IllnessPrescription.belongsTo(FamilyMember);
 
+FamilyMember.hasMany(Medicine); 
+Medicine.belongsTo(FamilyMember); 
+
 module.exports = {
   User,
   FamilyMember,

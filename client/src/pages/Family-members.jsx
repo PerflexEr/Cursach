@@ -10,6 +10,8 @@ const FamilyMembers = observer(() => {
     familyMembers.fetchFamilyMembers();
   }, [familyMembers]);
 
+  console.log(familyMembers);
+
   return (
     <Container>
         <Box
