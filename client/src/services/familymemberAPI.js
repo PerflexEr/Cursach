@@ -1,6 +1,6 @@
 import { $authHost, $host } from "./index";
 
-export const addFamilyMember = async (name, age , status) => {
+export const addFamilyMember = async ({name, age , status}) => {
   await $host.post("api/familymember/add", {
     name,
     age,

@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
-import { Container, AppBar, Tabs, Tab, Typography, Box, TextField, Button, InputLabel , MenuItem , useMediaQuery, useTheme } from '@mui/material';
+import { Container, AppBar, Tabs, Tab, Typography, Box, TextField, Button, InputLabel , MenuItem , useMediaQuery, useTheme ,Select } from '@mui/material';
 
 // import AddCircleIcon from '@mui/material';
+import { addFamilyMember } from '../services/familymemberAPI';
+import { addMedicine } from '../services/medicinesAPI';
+import { observer } from 'mobx-react-lite';
+import { Context } from '../index';
+
+import { medications } from '../utils/medications';
+import { medicationTypes } from '../utils/medications';
 
 const Admin = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -53,13 +60,23 @@ const Admin = () => {
     setTabValue(newValue);
   };
 
-  const handleAddFamilyMember = () => {
-    // Логика добавления члена семьи
+  const handleAddFamilyMember = async () => {
+    try {
+      let data; 
+      data = await addFamilyMember(familyMemberData);
+    } catch (e) {
+      alert(e.response.data.message);
+    }
     console.log('Adding Family Member:', familyMemberData);
   };
 
-  const handleAddMedicine = () => {
-    // Логика добавления лекарства
+  const handleAddMedicine = async () => {
+    try {
+      let data; 
+      data = await addMedicine(medicineData);
+    } catch (e) {
+      alert(e.response.data.message);
+    }
     console.log('Adding Medicine:', medicineData);
   };
 
@@ -80,6 +97,7 @@ const Admin = () => {
   
 const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+
 
   return (
     <Container>
@@ -126,17 +144,31 @@ const theme = useTheme();
         <Typography variant="h4">Add Medicine</Typography>
         <Box style={{display: 'flex' , gap: '20px', flexDirection: 'column'}}> 
         <TextField
-          label="Name"
-          variant="outlined"
-          value={medicineData.name}
-          onChange={(e) => setMedicineData({ ...medicineData, name: e.target.value })}
-        />
+            select
+            label={`Medicine name`}
+            variant="outlined"
+            value={medicineData.name}
+            onChange={(e) => setMedicineData({ ...medicineData, name: e.target.value })}
+            >
+            {medications.map((medication) => (
+                <MenuItem key={medication} value={medication}>
+                {medication}
+                </MenuItem>
+            ))}
+        </TextField>
         <TextField
-          label="Type"
-          variant="outlined"
-          value={medicineData.type}
-          onChange={(e) => setMedicineData({ ...medicineData, type: e.target.value })}
-        />
+            select
+            label={`Medicine type`}
+            variant="outlined"
+            value={medicineData.type}
+            onChange={(e) => setMedicineData({ ...medicineData, type: e.target.value })}
+            >
+            {medicationTypes.map((medication) => (
+                <MenuItem key={medication} value={medication}>
+                {medication}
+                </MenuItem>
+            ))}
+        </TextField>
         <Box>
         <InputLabel htmlFor="expiration-date" sx={{fontSize:'14px'}}>Expiration Date</InputLabel>
         <TextField

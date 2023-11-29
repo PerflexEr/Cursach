@@ -1,6 +1,6 @@
 import { $authHost, $host } from "./index";
 
-export const addillnes = async (name, age, status) => {
+export const addillnes = async ({name, age, status}) => {
   await $host.post("api/medicines/add", {
     diagnosis,
     reason_for_medications,
