@@ -33,7 +33,7 @@ const Admin = observer(() => {
   useEffect(() => {
     familyMembers.fetchFamilyMembers();
     medicines.fetchMedicines()
-  }, [familyMembers, medicines]);
+  }, [familyMembers, medicines, illnes]);
 
   const familyMembersWithIdAndName = familyMembers._familyMembersWithIdAndName
   const medicinesWithIdAndName = medicines._medicinesWithIdAndName
@@ -58,6 +58,7 @@ const Admin = observer(() => {
     type: "",
     expiration_date: "",
     cost: "",
+    amount: "",
     FamilyMemberId: ""
   });
 
@@ -249,6 +250,15 @@ const Admin = observer(() => {
                 value={medicineData.cost}
                 onChange={(e) =>
                   setMedicineData({ ...medicineData, cost: e.target.value })
+                }
+              />
+              <TextField
+                label="Amount"
+                variant="outlined"
+                type="number"
+                value={medicineData.amount}
+                onChange={(e) =>
+                  setMedicineData({ ...medicineData, amount: e.target.value })
                 }
               />
               <TextField

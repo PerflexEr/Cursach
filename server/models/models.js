@@ -14,6 +14,7 @@ const Medicine = sequelize.define("Medicine", {
   type: { type: DataTypes.STRING },
   expiration_date: { type: DataTypes.DATE },
   cost: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
+  amount: { type: DataTypes.INTEGER, allowNull: false },
 });
 
 

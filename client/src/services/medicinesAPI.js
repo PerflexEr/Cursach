@@ -5,6 +5,7 @@ export const addMedicine = async ({
   type,
   expiration_date,
   cost,
+  amount,
   FamilyMemberId,
 }) => {
   await $host.post("api/medicines/add", {
@@ -12,6 +13,7 @@ export const addMedicine = async ({
     type,
     expirationDate: expiration_date, 
     cost,
+    amount,
     FamilyMemberId,
   });
 };

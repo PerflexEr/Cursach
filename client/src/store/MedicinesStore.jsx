@@ -56,7 +56,8 @@ export default class MedicinesStore {
         name: medicine.name,
         type: medicine.type,
         cost: medicine.cost,
-        expDate: medicine.expiration_date
+        amount: medicine.amount,
+        expDate: new Date(medicine.expiration_date).toLocaleDateString(),
       }));
     } catch (e) {
       alert(e.response.data.message);

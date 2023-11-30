@@ -6,13 +6,14 @@ const ApiError = require("../error/ApiError");
 
 class MedicineController {
   async addMedicine(req, res, next) {
-    const { name, type, expirationDate, cost, FamilyMemberId } = req.body;
+    const { name, type, expirationDate, cost,amount,FamilyMemberId } = req.body;
     try {
       const medicine = await Medicine.create({
         name,
         type,
         expiration_date: expirationDate,
         cost,
+        amount,
         FamilyMemberId,
       });
       return res.json(medicine);
