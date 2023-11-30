@@ -2,36 +2,43 @@ import React, { useContext, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
 import { Bar } from 'react-chartjs-2';
+
 import Chart from 'chart.js/auto';
-
-const MedicinesChart = () => {
-
+const MedicinesChart = observer(() => {
   const { familyMembers, medicines } = useContext(Context);
 
   useEffect(() => {
-    familyMembers.fetchFamilyMembers();
-    medicines.fetchMedicines();
+    const fetchData = async () => {
+      await familyMembers.fetchFamilyMembers();
+      await medicines.fetchMedicines();
+    };
+
+    fetchData();
   }, [familyMembers, medicines]);
 
-  const datasets = familyMembers._familyMembers.map((member) => {
-    const membersMedicines = medicines._medicines.filter(medicine => {
-      return medicine.FamilyMemberId === member.FamilyMemberId;
+  const generateChartData = () => {
+    const datasets = familyMembers._familyMembers.map((member) => {
+      const spent = medicines._medicines.reduce((total, medicine) => {
+        if (medicine.FamilyMemberId === member.id) {
+          total += +medicine.cost; 
+        }
+        return total;
+      }, 0);
+
+      return {
+        label: member.name,
+        data: [spent],
+      };
     });
-    const totalSpent  = membersMedicines.reduce((total , medicine) => {
-      return total + medicine.cost;
-    }, 0);
 
     return {
-      label: member.name,
-      backgroundColor: "#000080",
-      data: [1000]
+      labels: ['Spent'],
+      datasets,
     };
-  });
-
-  const data = {
-    labels: ['Spent'],
-    datasets,
   };
+
+
+  const data = generateChartData();
 
   const options = {
     legend: {
@@ -39,20 +46,20 @@ const MedicinesChart = () => {
       position: 'top',
       labels: {
         fontColor: "#000080",
-      }
+      },
     },
     scales: {
       yAxes: [{
         ticks: {
-          beginAtZero: true
-        }
-      }]
-    }
+          beginAtZero: true,
+        },
+      }],
+    },
   };
 
   return (
     <Bar data={data} options={options} />
   );
-};
+});
 
 export default MedicinesChart;

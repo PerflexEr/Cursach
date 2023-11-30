@@ -48,7 +48,6 @@ const Medicine = observer(() => {
   return Boolean(medicine);
 });
 
-  
   return (
     <Container>
       <Box

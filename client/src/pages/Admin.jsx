@@ -19,7 +19,7 @@ import { addFamilyMember } from "../services/familymemberAPI";
 import { addMedicine } from "../services/medicinesAPI";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
-
+import { useLocalObservable } from "mobx-react-lite";
 import { medications } from "../utils/medications";
 import { medicationTypes } from "../utils/medications";
 import { addillnes } from "../services/illnesAPI";
@@ -33,14 +33,12 @@ const Admin = observer(() => {
   useEffect(() => {
     familyMembers.fetchFamilyMembers();
     medicines.fetchMedicines()
+    illnes.fetchIllneses()
   }, [familyMembers, medicines, illnes]);
 
   const familyMembersWithIdAndName = familyMembers._familyMembersWithIdAndName
   const medicinesWithIdAndName = medicines._medicinesWithIdAndName
 
-  console.log(familyMembersWithIdAndName);
-  console.log(medicines);
-  console.log(illnes);
   const [tabValue, setTabValue] = useState(0);
   
   
@@ -75,19 +73,6 @@ const Admin = observer(() => {
     "MedicineId": "",
   });
 
-  // State для использования лекарства
-  const [medicineUsageData, setMedicineUsageData] = useState({
-    pills_used: 0,
-    result: "",
-    comments: "",
-    PurchaseId: 0,
-  });
-
-  // State для списка купленных лекарств
-  const [purchaseData, setPurchaseData] = useState({
-    medicines: [],
-    FamilyMemberId: 0,
-  });
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -96,38 +81,36 @@ const Admin = observer(() => {
   const handleAddFamilyMember = async () => {
     try {
       await addFamilyMember(familyMemberData);
+      familyMembers.fetchFamilyMembers();
+      medicines.fetchMedicines()
+      illnes.fetchIllneses()
     } catch (e) {
       alert(e.response.data.message);
     }
-    console.log("Adding Family Member:", familyMemberData);
   };
 
   const handleAddMedicine = async () => {
     try {
       await addMedicine(medicineData);
+      familyMembers.fetchFamilyMembers();
+      medicines.fetchMedicines()
+       illnes.fetchIllneses()
+
     } catch (e) {
       alert(e.response.data.message);
     }
-    console.log("Adding Medicine:", medicineData);
   };
 
   const handleAddIllness = async () => {
     try {
       await addillnes(illnessData);
+      familyMembers.fetchFamilyMembers();
+      medicines.fetchMedicines()
+      illnes.fetchIllneses()
+
     } catch (e) {
       alert(e.response.data.message);
     }
-    console.log("Adding Illness:", illnessData);
-  };
-
-  const handleAddMedicineUsage = () => {
-    // Логика добавления использования лекарства
-    console.log("Adding Medicine Usage:", medicineUsageData);
-  };
-
-  const handleAddPurchase = () => {
-    // Логика добавления списка купленных лекарств
-    console.log("Adding Purchase:", purchaseData);
   };
 
   const theme = useTheme();
@@ -411,57 +394,6 @@ const Admin = observer(() => {
             onClick={handleAddIllness}
           >
             Add Illness
-          </Button>
-        </Box>
-      </TabPanel>
-
-      <TabPanel value={tabValue} index={3}>
-        <Typography variant="h4">Add Medicine Usage</Typography>
-
-        <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
-          <TextField
-            label="Pills Used"
-            variant="outlined"
-            value={medicineUsageData.pills_used}
-            onChange={(e) =>
-              setMedicineUsageData({
-                ...illnessData,
-                amount_of_pills: e.target.value,
-              })
-            }
-          />
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddMedicineUsage}
-          >
-            Add Medicine Usage
-          </Button>
-        </Box>
-      </TabPanel>
-      <TabPanel value={tabValue} index={4}>
-        <Typography variant="h4">Add Purchase</Typography>
-
-        <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
-          <TextField
-            label="MedicineId"
-            variant="outlined"
-            value={purchaseData.medicines[0]?.MedicineId || ""}
-            onChange={(e) =>
-              setPurchaseData({
-                ...purchaseData,
-                medicines: [{ MedicineId: e.target.value, quantity: 0 }],
-              })
-            }
-          />
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddPurchase}
-          >
-            Add Purchase
           </Button>
         </Box>
       </TabPanel>
