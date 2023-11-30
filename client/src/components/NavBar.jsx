@@ -22,7 +22,7 @@ import {
   FAMILY_ROUTE,
   MEDICINE_ROUTE,
   ILLNES_ROUTE,
-  MEDICINE_USAGE_ROUTE,
+  
 } from '../utils/consts';
 import { observer } from 'mobx-react-lite';
 
