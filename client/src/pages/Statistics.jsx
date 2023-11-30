@@ -1,14 +1,13 @@
 import React from 'react';
-import PieChart from './../charts/piechart';
-
+import MedicinesChart from '../charts/MedicinesChart';
+import { Container } from '@mui/material';
 const Statistics = () => {
   return (
-    <div>
-      <h2>Statistics</h2>
+    <Container>
       <div style={{ height: '400px' }}> 
-        <PieChart />
+        <MedicinesChart />
       </div>
-    </div>
+    </Container>
   );
 };
 

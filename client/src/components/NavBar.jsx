@@ -71,11 +71,6 @@ const NavBar = observer(() => {
                   <Typography variant="body1" textTransform={'none'}>Illness History</Typography>
                 </Button>
               </Link>
-              <Link to={MEDICINE_USAGE_ROUTE} style={{ color: 'white', textDecoration: 'none' }}>
-                <Button color="inherit">
-                  <Typography variant="body1" textTransform={'none'}>Medicines Usage</Typography>
-                </Button>
-              </Link>
             </>
           ) : (
             <>
@@ -92,9 +87,6 @@ const NavBar = observer(() => {
                   </ListItem>
                   <ListItem  component={Link} to={ILLNES_ROUTE} onClick={handleDrawerToggle}>
                     <Typography variant="body1">Illness History</Typography>
-                  </ListItem>
-                  <ListItem  component={Link} to={MEDICINE_USAGE_ROUTE} onClick={handleDrawerToggle}>
-                    <Typography variant="body1">Medicines Usage</Typography>
                   </ListItem>
                 </List>
               </Drawer>
