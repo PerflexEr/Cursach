@@ -10,7 +10,8 @@ const Medicine = observer(() => {
 
   useEffect(() => {
     medicines.fetchMedicines();
-  }, [medicines, filter]);
+    illnes.fetchIllneses()
+  }, [medicines, filter , illnes]);
 
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
@@ -18,32 +19,36 @@ const Medicine = observer(() => {
 
   const medicineInBalance = illnes._illneses.map((illnes) => ({
     medicineId: illnes.MedicineId,
-    amountLeft: illnes.amount_of_pills,
+    amountUsed: illnes.amount_of_pills,
   }));
 
-  let matchingMedicine;
+  let matchingMedicine
 
-  const filteredMedicines = medicines._medicinesWithIdAndNameAndExpDate.filter((medicine) => {
-    if (filter === 'expired') {
-      return new Date(medicine.expDate) < new Date();
+  const filteredMedicines = medicines._medicinesWithIdAndNameAndExpDate.map((medicine) => {
+  let amountUsed = 0;
+  if (filter === 'Already used') {
+    matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
+    if (matchingMedicine) {
+      amountUsed = matchingMedicine.amountUsed;
     }
+  }
 
-    if (filter === 'Already used') {
-      matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
+  if (filter === 'expired' && new Date(medicine.expDate) >= new Date()) {
+    return null;
+  }
 
-      if (matchingMedicine) {
-        return {
-          ...matchingMedicine,
-          amountLeft: matchingMedicine.amountLeft,
-        };
-      }
+  return {
+    ...medicine,
+    amountUsed,
+  };
+}).filter(medicine => {
+  if (filter === 'Already used') {
+    return medicine.amountUsed > 0;
+  }
+  return Boolean(medicine);
+});
 
-      return false;
-    }
-
-    return true;
-  });
-  console.log(filteredMedicines);
+  
   return (
     <Container>
       <Box
@@ -60,26 +65,46 @@ const Medicine = observer(() => {
           {filteredMedicines.map((medicine) => (
             <Grid item key={medicine.id} xs={12} sm={6} md={4} lg={3}>
               <Paper elevation={3} style={{ height: '100%', padding: '16px', borderRadius: '8px' }}>
-                <Typography variant="h6" style={{ marginBottom: '8px' }}>
-                  {medicine.name}
-                </Typography>
-                <Typography variant="body1" style={{ marginBottom: '8px' }}>
-                  <strong>Type:</strong> {medicine.type}
-                </Typography>
-                <Typography variant="body1" style={{ marginBottom: '8px' }}>
-                  <strong>Expiration Date:</strong> {medicine.expDate}
-                </Typography>
-                <Typography variant="body1" style={{ marginBottom: '8px' }}>
-                  <strong>Amount:</strong> {medicine.amount}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Cost:</strong> {medicine.cost}
-                </Typography>
-                {medicine.amountLeft ? (
-                  <Typography variant="body1">
-                    <strong>Amount Left:</strong> {medicine.amountLeft}
-                  </Typography>
-                ) : null}
+                {medicine.amountUsed ? (
+                  <>
+                    <Typography variant="h6" style={{ marginBottom: '8px' }}>
+                      {medicine.name}
+                    </Typography>
+                    <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                      <strong>Type:</strong> {medicine.type}
+                    </Typography>
+                    <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                      <strong>Expiration Date:</strong> {medicine.expDate}
+                    </Typography>
+                    <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                      <strong>Amount:</strong> {medicine.amount}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Cost:</strong> {medicine.cost}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Amount Left:</strong> {medicine.amountUsed}
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Typography variant="h6" style={{ marginBottom: '8px' }}>
+                      {medicine.name}
+                    </Typography>
+                    <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                      <strong>Type:</strong> {medicine.type}
+                    </Typography>
+                    <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                      <strong>Expiration Date:</strong> {medicine.expDate}
+                    </Typography>
+                    <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                      <strong>Amount:</strong> {medicine.amount}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Cost:</strong> {medicine.cost}
+                    </Typography>
+                  </>
+                )}
               </Paper>
             </Grid>
           ))}

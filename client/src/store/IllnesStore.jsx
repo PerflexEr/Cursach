@@ -5,8 +5,8 @@ import { allIllneses } from "../services/illnesAPI";
 export default class IllnesesStore {
   constructor() {
     this._illneses = [];
-    makeAutoObservable(this);
     this.fetchIllneses();
+    makeAutoObservable(this);
   }
 
   async fetchIllneses() {

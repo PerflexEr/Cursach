@@ -7,9 +7,9 @@ export default class FamilyStore {
     this._familyMembers = [];
     this._familyMembersNames = [];
     this._familyMembersWithIdAndName = [];
-    makeAutoObservable(this);
     this.getNamesList();
     this.getIdAndNamesList();
+    makeAutoObservable(this);
   }
   
   async fetchFamilyMembers() {

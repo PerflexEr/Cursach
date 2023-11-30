@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Box, Card, CardContent, Typography, Grid, Container, Paper } from '@mui/material';
+import { Box,Typography, Grid, Container, Paper } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
 

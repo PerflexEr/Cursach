@@ -8,11 +8,12 @@ export default class MedicinesStore {
     this._medicinesNames = []
     this._medicinesWithIdAndName = []
     this._medicinesWithIdAndNameAndExpDate = []
-    makeAutoObservable(this);
+
     this.fetchMedicines()
     this.getNamesList()
     this.getMedicinesIdAndNamesList()
     this.getMedicinesIdAndNamesAndExpDatesList()
+    makeAutoObservable(this);
   }
   
   async fetchMedicines() {
