@@ -7,10 +7,12 @@ export default class MedicinesStore {
     this._medicines = [];
     this._medicinesNames = []
     this._medicinesWithIdAndName = []
+    this._medicinesWithIdAndNameAndExpDate = []
     makeAutoObservable(this);
     this.fetchMedicines()
     this.getNamesList()
     this.getMedicinesIdAndNamesList()
+    this.getMedicinesIdAndNamesAndExpDatesList()
   }
   
   async fetchMedicines() {
@@ -40,6 +42,21 @@ export default class MedicinesStore {
       this._medicinesWithIdAndName = data.map((medicine) => ({
         id: medicine.id,
         name: medicine.name,
+      }));
+    } catch (e) {
+      alert(e.response.data.message);
+    }
+  }
+  async getMedicinesIdAndNamesAndExpDatesList() {
+    try {
+      const data = await allmedicines();
+      this._medicines = data;
+      this._medicinesWithIdAndNameAndExpDate = data.map((medicine) => ({
+        id: medicine.id,
+        name: medicine.name,
+        type: medicine.type,
+        cost: medicine.cost,
+        expDate: medicine.expiration_date
       }));
     } catch (e) {
       alert(e.response.data.message);

@@ -10,11 +10,12 @@ export const addMedicine = async ({
   await $host.post("api/medicines/add", {
     name,
     type,
-    expiration_date,
+    expirationDate: expiration_date, 
     cost,
     FamilyMemberId,
   });
 };
+;
 
 export const allmedicines = async () => {
   const { data } = await $host.get("api/medicines");

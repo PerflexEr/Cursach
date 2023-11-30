@@ -56,7 +56,7 @@ const Admin = observer(() => {
   const [medicineData, setMedicineData] = useState({
     name: "",
     type: "",
-    expirationDate: "",
+    expiration_date: "",
     cost: "",
     FamilyMemberId: ""
   });
@@ -233,11 +233,11 @@ const Admin = observer(() => {
                 <TextField
                   variant="outlined"
                   type="date"
-                  value={medicineData.expirationDate}
+                  value={medicineData.expiration_date}
                   onChange={(e) =>
                     setMedicineData({
                       ...medicineData,
-                      expirationDate: e.target.value,
+                      expiration_date: e.target.value,
                     })
                   }
                 />
