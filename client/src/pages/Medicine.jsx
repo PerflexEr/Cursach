@@ -3,15 +3,17 @@ import { Box, Typography, Grid, Container, Paper } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
 import MedicineFilter from '../components/MedicineFilter';
-
 const Medicine = observer(() => {
-  const { medicines, illnes,familyMembers } = useContext(Context);
+  const { medicines, illnes, familyMembers } = useContext(Context);
   const [filter, setFilter] = useState(null);
+  const [selectedMedicine, setSelectedMedicine] = useState({
+    medicineType: '',
+  });
 
   useEffect(() => {
     medicines.fetchMedicines();
-    illnes.fetchIllneses()
-  }, [medicines, filter , illnes , familyMembers ]);
+    illnes.fetchIllneses();
+  }, [medicines, filter, illnes, familyMembers]);
 
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
@@ -22,8 +24,7 @@ const Medicine = observer(() => {
     amountUsed: illnes.amount_of_pills,
   }));
 
-
- const filteredMedicines = medicines._medicines
+  const filteredMedicines = medicines._medicines
     .map((medicine) => {
       let amountUsed = 0;
       let matchingMedicine;
@@ -37,6 +38,16 @@ const Medicine = observer(() => {
 
       if (filter === 'expired' && new Date(medicine.expiration_date) >= new Date()) {
         return null;
+      }
+
+      if (filter === 'Type') {
+        matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
+        if (matchingMedicine) {
+          amountUsed = matchingMedicine.amountUsed;
+        }
+        if (selectedMedicine.medicineType !== '' && selectedMedicine.medicineType !== medicine.type) {
+          return null;
+        }
       }
 
       const familyMember = familyMembers._familyMembers.find((member) => member.id === medicine.FamilyMemberId);
@@ -71,9 +82,9 @@ const Medicine = observer(() => {
             padding: '0 20px',
           }}
         >
-          <MedicineFilter onFilterChange={handleFilterChange} />
+          <MedicineFilter onFilterChange={handleFilterChange} selectedMedicine={selectedMedicine} setSelectedMedicine={setSelectedMedicine} />
           <Typography variant="h6" style={{ marginTop: '20px' }}>
-            {filter === 'expired' ? 'No expired medicines available.' : 'No already used medicines available.'}
+            {filter === 'expired' ? 'No expired medicines available.' : 'No medicine with this type.'}
           </Typography>
         </Box>
       </Container>
@@ -91,7 +102,7 @@ const Medicine = observer(() => {
           padding: '0 20px',
         }}
       >
-        <MedicineFilter onFilterChange={handleFilterChange} />
+        <MedicineFilter onFilterChange={handleFilterChange} selectedMedicine={selectedMedicine} setSelectedMedicine={setSelectedMedicine} />
         <Grid container spacing={3}>
           {filteredMedicines.map((medicine) => (
             <Grid item key={medicine.id} xs={12} sm={6} md={4} lg={3}>

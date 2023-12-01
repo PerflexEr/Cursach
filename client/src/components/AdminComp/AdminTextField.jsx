@@ -24,6 +24,7 @@ const AdminTextField = ({label, state, statePar, stateFunc, type = "text", optio
   } else {
     return (
       <TextField
+
         label={label}
         variant="outlined"
         type={type}
