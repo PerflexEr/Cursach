@@ -15,15 +15,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  ADMIN_ROUTE,
-  LOGIN_ROUTE,
-  STATISTICS_ROUTE,
-  FAMILY_ROUTE,
-  MEDICINE_ROUTE,
-  ILLNES_ROUTE,
-  
-} from '../utils/consts';
+import { ADMIN_ROUTE, LOGIN_ROUTE, STATISTICS_ROUTE, FAMILY_ROUTE, MEDICINE_ROUTE, ILLNES_ROUTE } from '../utils/consts';
 import { observer } from 'mobx-react-lite';
 
 const NavBar = observer(() => {
@@ -46,10 +38,9 @@ const NavBar = observer(() => {
   return (
     <AppBar position="static" color="primary">
       <Container>
-        <Toolbar >
-          <Link to={STATISTICS_ROUTE} style={{ color: 'white', textDecoration: 'none' ,marginRight: '20px'}}>
-            <Typography variant="h6" noWrap component="div" 
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
+        <Toolbar>
+          <Link to={STATISTICS_ROUTE} style={{ color: 'white', textDecoration: 'none', marginRight: '20px' }}>
+            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
               Family Pharmacy
             </Typography>
           </Link>
@@ -79,13 +70,16 @@ const NavBar = observer(() => {
               </IconButton>
               <Drawer anchor="left" open={open} onClose={handleDrawerToggle}>
                 <List>
-                  <ListItem  component={Link} to={MEDICINE_ROUTE} onClick={handleDrawerToggle}>
+                  <ListItem component={Link} to={STATISTICS_ROUTE} onClick={handleDrawerToggle}>
+                    <Typography variant="body1">Statistics</Typography>
+                  </ListItem>
+                  <ListItem component={Link} to={MEDICINE_ROUTE} onClick={handleDrawerToggle}>
                     <Typography variant="body1">Medicines</Typography>
                   </ListItem>
-                  <ListItem  component={Link} to={FAMILY_ROUTE} onClick={handleDrawerToggle}>
+                  <ListItem component={Link} to={FAMILY_ROUTE} onClick={handleDrawerToggle}>
                     <Typography variant="body1">Family Members</Typography>
                   </ListItem>
-                  <ListItem  component={Link} to={ILLNES_ROUTE} onClick={handleDrawerToggle}>
+                  <ListItem component={Link} to={ILLNES_ROUTE} onClick={handleDrawerToggle}>
                     <Typography variant="body1">Illness History</Typography>
                   </ListItem>
                 </List>

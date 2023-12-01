@@ -1,0 +1,21 @@
+
+import { observer } from "mobx-react-lite";
+import { Box } from "@mui/material";
+const TabPanel = observer((props) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
+      {...other}
+      style={{ display: "flex", gap: "20px" }}
+    >
+      {value === index && <Box p={3}>{children}</Box>}
+    </div>
+  );
+});
+
+export default TabPanel

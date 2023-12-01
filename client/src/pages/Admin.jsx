@@ -11,9 +11,10 @@ import {
   useMediaQuery,
   useTheme,
   Snackbar,
-  Alert
+  Alert,
 } from "@mui/material";
 
+import TabPanel from "../components/AdminComp/TabPanel";
 import { addFamilyMember } from "../services/familymemberAPI";
 import { addMedicine } from "../services/medicinesAPI";
 import { observer } from "mobx-react-lite";
@@ -21,7 +22,8 @@ import { Context } from "../index";
 import { medications } from "../utils/medications";
 import { medicationTypes } from "../utils/medications";
 import { addillnes } from "../services/illnesAPI";
-
+import { deleteMedicine } from "../services/medicinesAPI";
+import { deleteFamilyMember } from "../services/familymemberAPI";
 import AdminTextField from '../components/AdminComp/AdminTextField'
 
  
@@ -46,6 +48,9 @@ const Admin = observer(() => {
     familyMemberName: "",
   });
 
+  const [familyMemberToDelete , setfamilyMemberToDelete] = useState({
+    id: ''
+  })
 
   const [medicineData, setMedicineData] = useState({
     name: "",
@@ -56,6 +61,9 @@ const Admin = observer(() => {
     FamilyMemberId: ""
   });
 
+  const [medicineToDeleteData , setMedicinetoDeleteId] = useState({
+    id: ''
+  })
 
   const [illnessData, setIllnessData] = useState({
     "diagnosis": "",
@@ -86,9 +94,34 @@ const Admin = observer(() => {
     }
   };
 
+  const handleDeleteFamilyMember = async () => {
+    try {
+      await deleteFamilyMember(familyMemberToDelete.id);
+      familyMembers.fetchFamilyMembers();
+      medicines.fetchMedicines()
+      illnes.fetchIllneses()
+      setOpen(true);
+    } catch (e) {
+      console.log(familyMemberToDelete.id);
+      alert(e.response.data.message);
+    }
+  };
+
   const handleAddMedicine = async () => {
     try {
       await addMedicine(medicineData);
+      familyMembers.fetchFamilyMembers();
+      medicines.fetchMedicines()
+      illnes.fetchIllneses()
+      setOpen(true);
+    } catch (e) {
+      alert(e.response.data.message);
+    }
+  };
+
+  const handleDeleteMedicine = async () => {
+    try {
+      await deleteMedicine(medicineToDeleteData.id);
       familyMembers.fetchFamilyMembers();
       medicines.fetchMedicines()
       illnes.fetchIllneses()
@@ -122,21 +155,19 @@ const Admin = observer(() => {
 
   return (
     <Container>
-      <AppBar
-        position="static"
-        sx={{ marginTop: "20px", borderRadius: "10px" }}
+       <AppBar position="static" sx={{ marginTop: '20px', borderRadius: '10px' }}>
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        variant={isSmallScreen ? 'fullWidth' : 'standard'}
+        centered={!isSmallScreen}
+        sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row' }}
       >
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          variant={isSmallScreen ? "fullWidth" : "standard"}
-          centered={!isSmallScreen}
-        >
-          <Tab label="Add Family Member" style={{ color: "white" }} />
-          <Tab label="Add Medicine" style={{ color: "white" }} />
-          <Tab label="Add Illness" style={{ color: "white" }} />
-        </Tabs>
-      </AppBar>
+        <Tab label="Edit Family Members" style={{ color: 'white' }} />
+        <Tab label="Edit Medicine" style={{ color: 'white' }} />
+        <Tab label="Edit Illness" style={{ color: 'white' }} />
+      </Tabs>
+    </AppBar>
       <TabPanel value={tabValue} index={0}>
         <Typography variant="h4">Add Family Member</Typography>
         <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
@@ -152,9 +183,38 @@ const Admin = observer(() => {
             </Alert>
           </Snackbar>
         </Box>
+        <Box marginTop={'20px'}>
+              <Typography variant="h4">Delete Family member</Typography>
+              <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
+                <AdminTextField 
+                  label="Select Family member to Delete"
+                  state={familyMemberToDelete}  
+                  statePar="id"  
+                  stateFunc={setfamilyMemberToDelete}
+                  type="select" 
+                  options={familyMembers._familyMembers.map(member => ({
+                    value: member.id,
+                    label: `${member.name}`
+                  }))}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleDeleteFamilyMember}
+                >
+                  Delete family member
+                </Button>
+
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                  <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Family member deleted
+                  </Alert>
+                </Snackbar>
+                </Box>
+            </Box>
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        <Box display={"grid"} >
+        <Box display={"flex"} >
           <Box>
             <Typography variant="h4">Add Medicine</Typography>
             <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
@@ -182,7 +242,35 @@ const Admin = observer(() => {
                 </Alert>
                </Snackbar>
             </Box>
-            
+            <Box marginTop={'20px'}>
+              <Typography variant="h4">Delete Medicine</Typography>
+              <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
+                <AdminTextField 
+                  label="Select Medicine to Delete"
+                  state={medicineToDeleteData}  
+                  statePar="id"  
+                  stateFunc={setMedicinetoDeleteId}
+                  type="select" 
+                  options={medicines._medicines.map(medicine => ({
+                    value: medicine.id,
+                    label: `${medicine.name} ${`Exp date:`}${new Date(medicine.expiration_date).toLocaleDateString()}`
+                  }))}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleDeleteMedicine}
+                >
+                  Delete Medicine
+                </Button>
+
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                  <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Medicine deleted
+                  </Alert>
+                </Snackbar>
+                </Box>
+            </Box>
           </Box>
         </Box>
       </TabPanel>
@@ -217,21 +305,6 @@ const Admin = observer(() => {
   );
 });
 
-const TabPanel = observer((props) => {
-  const { children, value, index, ...other } = props;
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-      style={{ display: "flex", gap: "20px" }}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </div>
-  );
-});
 
 export default Admin;

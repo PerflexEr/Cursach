@@ -12,3 +12,8 @@ export const allfamilymembers = async () => {
   const {data} = await $host.get("api/familymember");
   return data
 };
+
+export const deleteFamilyMember = async (id) => {
+  const { data } = await $host.delete(`api/familymember/${id}`);
+  return data;
+};
