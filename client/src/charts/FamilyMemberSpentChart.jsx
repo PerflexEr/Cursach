@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
 import { Bar } from 'react-chartjs-2';
 
-import Chart from 'chart.js/auto';
+
 const MedicinesChart = observer(() => {
   const { familyMembers, medicines } = useContext(Context);
 
@@ -17,7 +17,7 @@ const MedicinesChart = observer(() => {
   }, [familyMembers, medicines]);
 
   const generateChartData = () => {
-    const datasets = familyMembers._familyMembers.map((member) => {
+    const datasets = familyMembers._familyMembers.reduce((acc, member) => {
       const spent = medicines._medicines.reduce((total, medicine) => {
         if (medicine.FamilyMemberId === member.id) {
           total += +medicine.cost; 
@@ -25,11 +25,14 @@ const MedicinesChart = observer(() => {
         return total;
       }, 0);
 
-      return {
-        label: member.name,
-        data: [spent],
-      };
-    });
+      if (spent > 0) {
+        acc.push({
+          label: member.name,
+          data: [spent],
+        });
+      }
+      return acc;
+    }, []); 
 
     return {
       labels: ['Spent'],
@@ -38,9 +41,12 @@ const MedicinesChart = observer(() => {
   };
 
 
+
+
   const data = generateChartData();
 
   const options = {
+    responsive: true,
     legend: {
       display: true,
       position: 'top',
@@ -48,13 +54,7 @@ const MedicinesChart = observer(() => {
         fontColor: "#000080",
       },
     },
-    scales: {
-      yAxes: [{
-        ticks: {
-          beginAtZero: true,
-        },
-      }],
-    },
+    
   };
 
   return (

@@ -1,63 +1,45 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
+
 
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 
+
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
-const FamilyIllnesHistoryChart = observer(() => {
+const MedicinesChart = observer(() => {
 
-  const { medicines, illnes } = useContext(Context);
+  const { medicines, illnes ,familyMembers } = useContext(Context);
 
 
   useEffect(() => {
     medicines.fetchMedicines();
     illnes.fetchIllneses()
-  }, [medicines , illnes]);
+  }, [medicines , illnes , familyMembers]);
 
 
-  let unusedMedicines = 0
-  let usedMedicines = 0
-  let expiredMedicines = 0
+  let illnessCounts = familyMembers._familyMembers.map(member => {
+  const illnesses = illnes._illneses.filter(illness => illness.FamilyMemberId === member.id);
+  return {
+    name: member.name,
+    illnessCount: illnesses.length
+    };
+  }).filter(member => member.illnessCount > 0);
 
-  medicines._medicinesWithIdAndNameAndExpDate.map((medicine) => {
-    if (new Date(medicine.expDate) <= new Date()) {
-     expiredMedicines++;
-    }
-  })
-
-  const medicineInBalance = illnes._illneses.map((illnes) => ({
-    medicineId: illnes.MedicineId,
-    amountUsed: illnes.amount_of_pills,
-  }));
-
-  let matchingMedicine;
-
-  medicines._medicinesWithIdAndNameAndExpDate.map((medicine) => {
-      matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
-      if (matchingMedicine) {
-        usedMedicines++;
-      }
-  });
-
-  unusedMedicines = medicines._medicinesWithIdAndNameAndExpDate.length - (usedMedicines + expiredMedicines)
+  console.log(illnessCounts);
 
 
   const data = {
-  labels: ['Unused', 'Already used', 'Expired'],
+  labels: illnessCounts.map(member => member.name),
   datasets: [
     {
-      data: [unusedMedicines, usedMedicines, expiredMedicines],
-      backgroundColor: [
-        'rgba(75, 192, 192, 0.5)',
-        'rgba(255, 206, 86, 0.5)',
-        'rgba(255, 99, 132, 0.5)',
-      ],
+      data: illnessCounts.map(member => member.illnessCount),
+
     },
-  ],
-};
+    ],
+  };
 
   const options = {
     responsive: true,
@@ -70,10 +52,13 @@ const FamilyIllnesHistoryChart = observer(() => {
         display: true,
         text: 'Medicine Usage Chart',
       },
+      colors: {
+        forceOverride: true
+      }
     },
   };
 
   return <Pie data={data} options={options} />;
 });
 
-export default FamilyIllnesHistoryChart;
+export default MedicinesChart;

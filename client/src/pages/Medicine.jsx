@@ -5,13 +5,13 @@ import { Context } from '../index';
 import MedicineFilter from '../components/MedicineFilter';
 
 const Medicine = observer(() => {
-  const { medicines, illnes } = useContext(Context);
+  const { medicines, illnes,familyMembers } = useContext(Context);
   const [filter, setFilter] = useState(null);
 
   useEffect(() => {
     medicines.fetchMedicines();
     illnes.fetchIllneses()
-  }, [medicines, filter , illnes]);
+  }, [medicines, filter , illnes , familyMembers ]);
 
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
@@ -22,10 +22,11 @@ const Medicine = observer(() => {
     amountUsed: illnes.amount_of_pills,
   }));
 
-  let matchingMedicine
 
-  const filteredMedicines = medicines._medicinesWithIdAndNameAndExpDate.map((medicine) => {
+ const filteredMedicines = medicines._medicines.map((medicine) => {
   let amountUsed = 0;
+  let matchingMedicine;
+
   if (filter === 'Already used') {
     matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
     if (matchingMedicine) {
@@ -33,21 +34,30 @@ const Medicine = observer(() => {
     }
   }
 
-  if (filter === 'expired' && new Date(medicine.expDate) >= new Date()) {
+  if (filter === 'expired' && new Date(medicine.expiration_date) >= new Date()) {
     return null;
   }
 
+  const familyMember = familyMembers._familyMembers.find((member) => member.id === medicine.FamilyMemberId);
+
   return {
     ...medicine,
+    expiration_date: new Date(medicine.expiration_date).toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }),
+    familyMemberName: familyMember ? familyMember.name : null,
     amountUsed,
   };
-}).filter(medicine => {
-  if (filter === 'Already used') {
-    return medicine.amountUsed > 0;
-  }
-  return Boolean(medicine);
-});
+  }).filter(medicine => {
+    if (filter === 'Already used') {
+      return medicine.amountUsed > 0;
+    }
+    return Boolean(medicine);
+  });
 
+  console.log(filteredMedicines);
   return (
     <Container>
       <Box
@@ -73,7 +83,7 @@ const Medicine = observer(() => {
                       <strong>Type:</strong> {medicine.type}
                     </Typography>
                     <Typography variant="body1" style={{ marginBottom: '8px' }}>
-                      <strong>Expiration Date:</strong> {medicine.expDate}
+                      <strong>Expiration Date:</strong> {medicine.expiration_date}
                     </Typography>
                     <Typography variant="body1" style={{ marginBottom: '8px' }}>
                       <strong>Amount:</strong> {medicine.amount}
@@ -82,7 +92,10 @@ const Medicine = observer(() => {
                       <strong>Cost:</strong> {medicine.cost}
                     </Typography>
                     <Typography variant="body1">
-                      <strong>Amount Left:</strong> {medicine.amountUsed}
+                      <strong>Family member:</strong> {medicine.familyMemberName}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Amount left :</strong> {medicine.amount - medicine.amountUsed}
                     </Typography>
                   </>
                 ) : (
@@ -94,13 +107,16 @@ const Medicine = observer(() => {
                       <strong>Type:</strong> {medicine.type}
                     </Typography>
                     <Typography variant="body1" style={{ marginBottom: '8px' }}>
-                      <strong>Expiration Date:</strong> {medicine.expDate}
+                      <strong>Expiration Date:</strong> {medicine.expiration_date}
                     </Typography>
                     <Typography variant="body1" style={{ marginBottom: '8px' }}>
                       <strong>Amount:</strong> {medicine.amount}
                     </Typography>
                     <Typography variant="body1">
                       <strong>Cost:</strong> {medicine.cost}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Family member:</strong> {medicine.familyMemberName}
                     </Typography>
                   </>
                 )}

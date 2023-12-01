@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
 
@@ -22,7 +22,7 @@ const MedicinesChart = observer(() => {
   let usedMedicines = 0
   let expiredMedicines = 0
 
-  medicines._medicinesWithIdAndNameAndExpDate.map((medicine) => {
+  medicines._medicinesWithIdAndNameAndExpDate.forEach((medicine) => {
     if (new Date(medicine.expDate) <= new Date()) {
      expiredMedicines++;
     }
@@ -35,7 +35,7 @@ const MedicinesChart = observer(() => {
 
   let matchingMedicine;
 
-  medicines._medicinesWithIdAndNameAndExpDate.map((medicine) => {
+  medicines._medicinesWithIdAndNameAndExpDate.forEach((medicine) => {
       matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
       if (matchingMedicine) {
         usedMedicines++;
@@ -50,11 +50,7 @@ const MedicinesChart = observer(() => {
   datasets: [
     {
       data: [unusedMedicines, usedMedicines, expiredMedicines],
-      backgroundColor: [
-        'rgba(75, 192, 192, 0.5)',
-        'rgba(255, 206, 86, 0.5)',
-        'rgba(255, 99, 132, 0.5)',
-      ],
+      
     },
   ],
 };

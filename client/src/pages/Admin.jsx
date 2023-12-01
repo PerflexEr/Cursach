@@ -19,7 +19,6 @@ import { addFamilyMember } from "../services/familymemberAPI";
 import { addMedicine } from "../services/medicinesAPI";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
-import { useLocalObservable } from "mobx-react-lite";
 import { medications } from "../utils/medications";
 import { medicationTypes } from "../utils/medications";
 import { addillnes } from "../services/illnesAPI";
@@ -35,10 +34,7 @@ const Admin = observer(() => {
     medicines.fetchMedicines()
     illnes.fetchIllneses()
   }, [familyMembers, medicines, illnes]);
-
-  const familyMembersWithIdAndName = familyMembers._familyMembersWithIdAndName
-  const medicinesWithIdAndName = medicines._medicinesWithIdAndName
-
+  
   const [tabValue, setTabValue] = useState(0);
   
   
@@ -253,7 +249,7 @@ const Admin = observer(() => {
                   setMedicineData({ ...medicineData, FamilyMemberId: e.target.value })
                 }
                 >
-                {familyMembersWithIdAndName.map((member) => (
+                {familyMembers._familyMembers.map((member) => (
                     <MenuItem key={member.id} value={member.id}>
                     {member.name}
                     </MenuItem>
@@ -318,7 +314,7 @@ const Admin = observer(() => {
                 setIllnessData({ ...illnessData, FamilyMemberId: e.target.value })
               }
               >
-              {familyMembersWithIdAndName.map((member) => (
+              {familyMembers._familyMembers.map((member) => (
                   <MenuItem key={member.id} value={member.id}>
                   {member.name}
                   </MenuItem>
@@ -333,7 +329,7 @@ const Admin = observer(() => {
                 setIllnessData({ ...illnessData, MedicineId: e.target.value })
               }
               >
-              {medicinesWithIdAndName.map((medicine) => (
+              {medicines._medicines.map((medicine) => (
                   <MenuItem key={medicine.id} value={medicine.id}>
                   {medicine.name}
                   </MenuItem>

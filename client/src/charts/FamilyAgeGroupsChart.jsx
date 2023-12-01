@@ -18,7 +18,7 @@ const FamilyAgeGroups = observer(() => {
   let between18_60 = 0
   let older60 = 0
 
-  familyMembers._familyMembers.map((member) => {
+  familyMembers._familyMembers.forEach((member) => {
     if (member.age < 18) {
      under18++;
     }else if(member.age >= 18 && member.age <= 60){
@@ -34,11 +34,7 @@ const FamilyAgeGroups = observer(() => {
   datasets: [
     {
       data: [under18, between18_60, older60],
-      backgroundColor: [
-        'rgba(75, 192, 192, 0.5)',
-        'rgba(255, 206, 86, 0.5)',
-        'rgba(255, 99, 132, 0.5)',
-      ],
+      
     },
   ],
 };
