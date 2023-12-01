@@ -23,41 +23,63 @@ const Medicine = observer(() => {
   }));
 
 
- const filteredMedicines = medicines._medicines.map((medicine) => {
-  let amountUsed = 0;
-  let matchingMedicine;
+ const filteredMedicines = medicines._medicines
+    .map((medicine) => {
+      let amountUsed = 0;
+      let matchingMedicine;
 
-  if (filter === 'Already used') {
-    matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
-    if (matchingMedicine) {
-      amountUsed = matchingMedicine.amountUsed;
-    }
+      if (filter === 'Already used') {
+        matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
+        if (matchingMedicine) {
+          amountUsed = matchingMedicine.amountUsed;
+        }
+      }
+
+      if (filter === 'expired' && new Date(medicine.expiration_date) >= new Date()) {
+        return null;
+      }
+
+      const familyMember = familyMembers._familyMembers.find((member) => member.id === medicine.FamilyMemberId);
+
+      return {
+        ...medicine,
+        expiration_date: new Date(medicine.expiration_date).toLocaleDateString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }),
+        familyMemberName: familyMember ? familyMember.name : null,
+        amountUsed,
+      };
+    })
+    .filter((medicine) => {
+      if (filter === 'Already used') {
+        return medicine.amountUsed > 0;
+      }
+      return Boolean(medicine);
+    });
+
+  if (filteredMedicines.length === 0) {
+    return (
+      <Container>
+        <Box
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: '30px',
+            padding: '0 20px',
+          }}
+        >
+          <MedicineFilter onFilterChange={handleFilterChange} />
+          <Typography variant="h6" style={{ marginTop: '20px' }}>
+            {filter === 'expired' ? 'No expired medicines available.' : 'No already used medicines available.'}
+          </Typography>
+        </Box>
+      </Container>
+    );
   }
 
-  if (filter === 'expired' && new Date(medicine.expiration_date) >= new Date()) {
-    return null;
-  }
-
-  const familyMember = familyMembers._familyMembers.find((member) => member.id === medicine.FamilyMemberId);
-
-  return {
-    ...medicine,
-    expiration_date: new Date(medicine.expiration_date).toLocaleDateString('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    }),
-    familyMemberName: familyMember ? familyMember.name : null,
-    amountUsed,
-  };
-  }).filter(medicine => {
-    if (filter === 'Already used') {
-      return medicine.amountUsed > 0;
-    }
-    return Boolean(medicine);
-  });
-
-  console.log(filteredMedicines);
   return (
     <Container>
       <Box

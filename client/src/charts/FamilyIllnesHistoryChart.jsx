@@ -28,7 +28,7 @@ const MedicinesChart = observer(() => {
     };
   }).filter(member => member.illnessCount > 0);
 
-  console.log(illnessCounts);
+
 
 
   const data = {
