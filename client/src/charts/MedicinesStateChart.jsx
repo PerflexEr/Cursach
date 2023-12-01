@@ -4,6 +4,7 @@ import { Context } from '../index';
 
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+import Chart from 'chart.js/auto';
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 

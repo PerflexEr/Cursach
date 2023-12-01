@@ -6,15 +6,14 @@ import {
   Tab,
   Typography,
   Box,
-  TextField,
   Button,
   InputLabel,
-  MenuItem,
   useMediaQuery,
   useTheme,
+  Snackbar,
+  Alert
 } from "@mui/material";
 
-// import AddCircleIcon from '@mui/material';
 import { addFamilyMember } from "../services/familymemberAPI";
 import { addMedicine } from "../services/medicinesAPI";
 import { observer } from "mobx-react-lite";
@@ -23,7 +22,9 @@ import { medications } from "../utils/medications";
 import { medicationTypes } from "../utils/medications";
 import { addillnes } from "../services/illnesAPI";
 
+import AdminTextField from '../components/AdminComp/AdminTextField'
 
+ 
 const Admin = observer(() => {
   const { familyMembers } = useContext(Context);
   const { medicines } = useContext(Context)
@@ -36,9 +37,8 @@ const Admin = observer(() => {
   }, [familyMembers, medicines, illnes]);
   
   const [tabValue, setTabValue] = useState(0);
-  
-  
-  // State для члена семьи
+  const [open, setOpen] = useState(false);
+
   const [familyMemberData, setFamilyMemberData] = useState({
     name: "",
     age: "",
@@ -46,7 +46,7 @@ const Admin = observer(() => {
     familyMemberName: "",
   });
 
-  // State для лекарства
+
   const [medicineData, setMedicineData] = useState({
     name: "",
     type: "",
@@ -56,7 +56,7 @@ const Admin = observer(() => {
     FamilyMemberId: ""
   });
 
-  // State для истории болезни
+
   const [illnessData, setIllnessData] = useState({
     "diagnosis": "",
     "reason_for_medications": "",
@@ -80,6 +80,7 @@ const Admin = observer(() => {
       familyMembers.fetchFamilyMembers();
       medicines.fetchMedicines()
       illnes.fetchIllneses()
+      setOpen(true);
     } catch (e) {
       alert(e.response.data.message);
     }
@@ -90,8 +91,8 @@ const Admin = observer(() => {
       await addMedicine(medicineData);
       familyMembers.fetchFamilyMembers();
       medicines.fetchMedicines()
-       illnes.fetchIllneses()
-
+      illnes.fetchIllneses()
+      setOpen(true);
     } catch (e) {
       alert(e.response.data.message);
     }
@@ -103,10 +104,17 @@ const Admin = observer(() => {
       familyMembers.fetchFamilyMembers();
       medicines.fetchMedicines()
       illnes.fetchIllneses()
-
+      setOpen(true);
     } catch (e) {
       alert(e.response.data.message);
     }
+  };
+
+  const handleClose = (reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   };
 
   const theme = useTheme();
@@ -132,129 +140,35 @@ const Admin = observer(() => {
       <TabPanel value={tabValue} index={0}>
         <Typography variant="h4">Add Family Member</Typography>
         <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
-          <TextField
-            label="Name"
-            variant="outlined"
-            value={familyMemberData.name}
-            onChange={(e) =>
-              setFamilyMemberData({ ...familyMemberData, name: e.target.value })
-            }
-          />
-          <TextField
-            label="Age"
-            variant="outlined"
-            type="number"
-            value={familyMemberData.age}
-            onChange={(e) =>
-              setFamilyMemberData({ ...familyMemberData, age: e.target.value })
-            }
-          />
-          <TextField
-            label="Status"
-            variant="outlined"
-            value={familyMemberData.status}
-            onChange={(e) =>
-              setFamilyMemberData({
-                ...familyMemberData,
-                status: e.target.value,
-              })
-            }
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddFamilyMember}
-          >
+          <AdminTextField label="Name" state={familyMemberData} statePar="name" stateFunc={setFamilyMemberData}/>
+          <AdminTextField label="Age" state={familyMemberData} statePar="age" stateFunc={setFamilyMemberData} type="number"/>
+          <AdminTextField label="Status" state={familyMemberData} statePar="status" stateFunc={setFamilyMemberData}/>
+          <Button variant="contained" color="primary" onClick={handleAddFamilyMember}>
             Add Family Member
           </Button>
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+              Family member added
+            </Alert>
+          </Snackbar>
         </Box>
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
         <Box display={"grid"} >
           <Box>
             <Typography variant="h4">Add Medicine</Typography>
-            <Box
-              style={{ display: "flex", gap: "20px", flexDirection: "column" }}
-            >
-              <TextField
-                select
-                label={`Medicine name`}
-                variant="outlined"
-                value={medicineData.name}
-                onChange={(e) =>
-                  setMedicineData({ ...medicineData, name: e.target.value })
-                }
-              >
-                {medications.map((medication) => (
-                  <MenuItem key={medication} value={medication}>
-                    {medication}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                select
-                label={`Medicine type`}
-                variant="outlined"
-                value={medicineData.type}
-                onChange={(e) =>
-                  setMedicineData({ ...medicineData, type: e.target.value })
-                }
-              >
-                {medicationTypes.map((medication) => (
-                  <MenuItem key={medication} value={medication}>
-                    {medication}
-                  </MenuItem>
-                ))}
-              </TextField>
+            <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
+              <AdminTextField label="Medicine name" state={medicineData} statePar="name" stateFunc={setMedicineData} type="select" options={medications.map(medication => ({value: medication, label: medication}))}/>
+              <AdminTextField label="Medicine type" state={medicineData} statePar="type" stateFunc={setMedicineData} type="select" options={medicationTypes.map(medication => ({value: medication, label: medication}))}/>
               <Box>
                 <InputLabel htmlFor="expiration-date" sx={{ fontSize: "14px" }}>
                   Expiration Date
                 </InputLabel>
-                <TextField
-                  variant="outlined"
-                  type="date"
-                  value={medicineData.expiration_date}
-                  onChange={(e) =>
-                    setMedicineData({
-                      ...medicineData,
-                      expiration_date: e.target.value,
-                    })
-                  }
-                />
+                <AdminTextField state={medicineData} statePar="expiration_date" stateFunc={setMedicineData} type="date"/>
               </Box>
-              <TextField
-                label="Cost"
-                variant="outlined"
-                type="number"
-                value={medicineData.cost}
-                onChange={(e) =>
-                  setMedicineData({ ...medicineData, cost: e.target.value })
-                }
-              />
-              <TextField
-                label="Amount"
-                variant="outlined"
-                type="number"
-                value={medicineData.amount}
-                onChange={(e) =>
-                  setMedicineData({ ...medicineData, amount: e.target.value })
-                }
-              />
-              <TextField
-                select
-                label="Select Family Member"
-                variant="outlined"
-                value={medicineData.FamilyMemberId}
-                onChange={(e) =>
-                  setMedicineData({ ...medicineData, FamilyMemberId: e.target.value })
-                }
-                >
-                {familyMembers._familyMembers.map((member) => (
-                    <MenuItem key={member.id} value={member.id}>
-                    {member.name}
-                    </MenuItem>
-                ))}
-              </TextField>
+              <AdminTextField label="Cost" state={medicineData} statePar="cost" stateFunc={setMedicineData} type="number"/>
+              <AdminTextField label="Amount" state={medicineData} statePar="amount" stateFunc={setMedicineData} type="number"/>
+              <AdminTextField label="Select Family Member" state={medicineData} statePar="FamilyMemberId" stateFunc={setMedicineData} type="select" options={familyMembers._familyMembers.map(member => ({value: member.id, label: member.name}))}/>
               <Button
                 variant="contained"
                 color="primary"
@@ -262,6 +176,11 @@ const Admin = observer(() => {
               >
                 Add Medicine
               </Button>
+              <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                  Medicine added
+                </Alert>
+               </Snackbar>
             </Box>
             
           </Box>
@@ -270,127 +189,28 @@ const Admin = observer(() => {
       <TabPanel value={tabValue} index={2}>
         <Typography variant="h4">Add Illness</Typography>
         <Box style={{ display: "flex", gap: "20px", flexDirection: "column" }}>
-          <TextField
-            label="Diagnosis"
-            variant="outlined"
-            value={illnessData.diagnosis}
-            onChange={(e) =>
-              setIllnessData({ ...illnessData, diagnosis: e.target.value })
-            }
-          />
-          <TextField
-            label="Reason for Medications"
-            variant="outlined"
-            value={illnessData.reason_for_medications}
-            onChange={(e) =>
-              setIllnessData({
-                ...illnessData,
-                reason_for_medications: e.target.value,
-              })
-            }
-          />
+          <AdminTextField label="Diagnosis" state={illnessData} statePar="diagnosis" stateFunc={setIllnessData}/>
+          <AdminTextField label="Reason for Medications" state={illnessData} statePar="reason_for_medications" stateFunc={setIllnessData}/>
           <Box>
             <InputLabel htmlFor="expiration-date" sx={{ fontSize: "14px" }}>
               Start of Illnes
             </InputLabel>
-            <TextField
-              variant="outlined"
-              type="date"
-              value={illnessData.period_of_illness}
-              onChange={(e) =>
-                setIllnessData({
-                  ...illnessData,
-                  period_of_illness: e.target.value,
-                })
-              }
-            />
+            <AdminTextField state={illnessData} statePar="period_of_illness" stateFunc={setIllnessData} type="date"/>
           </Box>
-          <TextField
-              select
-              label="Select Family Member"
-              variant="outlined"
-              value={illnessData.FamilyMemberId}
-              onChange={(e) =>
-                setIllnessData({ ...illnessData, FamilyMemberId: e.target.value })
-              }
-              >
-              {familyMembers._familyMembers.map((member) => (
-                  <MenuItem key={member.id} value={member.id}>
-                  {member.name}
-                  </MenuItem>
-              ))}
-          </TextField>
-            <TextField
-              select
-              label="Select Medicine"
-              variant="outlined"
-              value={illnessData.MedicineId}
-              onChange={(e) =>
-                setIllnessData({ ...illnessData, MedicineId: e.target.value })
-              }
-              >
-              {medicines._medicines.map((medicine) => (
-                  <MenuItem key={medicine.id} value={medicine.id}>
-                  {medicine.name}
-                  </MenuItem>
-              ))}
-          </TextField>
-          <TextField
-              variant="outlined"
-              type="number"
-              label="Amount of Pills"
-              value={illnessData.amount_of_pills}
-              onChange={(e) =>
-                setIllnessData({
-                  ...illnessData,
-                  amount_of_pills: e.target.value,
-                })
-              }
-            />
-          <TextField
-            select
-            label={`Presctibed by`}
-            variant="outlined"
-            value={illnessData.prescribed_by}
-            onChange={(e) =>
-              setIllnessData({ ...illnessData, prescribed_by: e.target.value })
-            }
-          >
-            <MenuItem value="DrSidorov">Dr. Сидоров С.О.</MenuItem>
-            <MenuItem value="DrIvanov">Dr. Иванов И.И.</MenuItem>
-            <MenuItem value="DrPetrov">Dr. Петров П.П.</MenuItem>
-          </TextField>
-
-          <TextField
-            select
-            label={`Result`}
-            variant="outlined"
-            value={illnessData.result}
-            onChange={(e) =>
-              setIllnessData({ ...illnessData, result: e.target.value })
-            }
-          >
-            <MenuItem value="Помогло">Помогло</MenuItem>
-            <MenuItem value="Не помогло">Не помогло</MenuItem>
-            <MenuItem value="Побочки">Есть побочки</MenuItem>
-          </TextField>
-
-          <TextField
-            label="Note"
-            variant="outlined"
-            value={illnessData.note}
-            onChange={(e) =>
-              setIllnessData({ ...illnessData, note: e.target.value })
-            }
-          />
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddIllness}
-          >
+          <AdminTextField label="Select Family Member" state={illnessData} statePar="FamilyMemberId" stateFunc={setIllnessData} type="select" options={familyMembers._familyMembers.map(member => ({value: member.id, label: member.name}))}/>
+          <AdminTextField label="Select Medicine" state={illnessData} statePar="MedicineId" stateFunc={setIllnessData} type="select" options={medicines._medicines.map(medicine => ({value: medicine.id, label: medicine.name}))}/>
+          <AdminTextField label="Amount of Pills" state={illnessData} statePar="amount_of_pills" stateFunc={setIllnessData} type="number"/>
+          <AdminTextField label="Presctibed by" state={illnessData} statePar="prescribed_by" stateFunc={setIllnessData} type="select" options={[{value: 'DrSidorov', label: 'Dr. Сидоров С.О.'}, {value: 'DrIvanov', label: 'Dr. Иванов И.И.'}, {value: 'DrPetrov', label: 'Dr. Петров П.П.'}]}/>
+          <AdminTextField label="Result" state={illnessData} statePar="result" stateFunc={setIllnessData} type="select" options={[{value: 'Помогло', label: 'Помогло'}, {value: 'Не помогло', label: 'Не помогло'}, {value: 'Побочки', label: 'Есть побочки'}]}/>
+          <AdminTextField label="Note" state={illnessData} statePar="note" stateFunc={setIllnessData}/>
+          <Button variant="contained" color="primary" onClick={handleAddIllness}>
             Add Illness
           </Button>
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+              Illness added
+            </Alert>
+          </Snackbar>
         </Box>
       </TabPanel>
     </Container>
