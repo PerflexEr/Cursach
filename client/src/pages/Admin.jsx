@@ -179,7 +179,7 @@ const Admin = observer(() => {
           </Button>
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-              Family member added
+              Information saved
             </Alert>
           </Snackbar>
         </Box>
@@ -207,7 +207,7 @@ const Admin = observer(() => {
 
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                   <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    Family member deleted
+                    Information saved
                   </Alert>
                 </Snackbar>
                 </Box>
@@ -238,7 +238,7 @@ const Admin = observer(() => {
               </Button>
               <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                  Medicine added
+                  Information saved
                 </Alert>
                </Snackbar>
             </Box>
@@ -266,7 +266,7 @@ const Admin = observer(() => {
 
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                   <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    Medicine deleted
+                    Information saved
                   </Alert>
                 </Snackbar>
                 </Box>
@@ -296,7 +296,7 @@ const Admin = observer(() => {
           </Button>
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-              Illness added
+              Information saved
             </Alert>
           </Snackbar>
         </Box>

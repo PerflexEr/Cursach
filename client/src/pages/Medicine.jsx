@@ -3,6 +3,7 @@ import { Box, Typography, Grid, Container, Paper } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
 import MedicineFilter from '../components/MedicineFilter';
+
 const Medicine = observer(() => {
   const { medicines, illnes, familyMembers } = useContext(Context);
   const [filter, setFilter] = useState(null);
@@ -19,22 +20,31 @@ const Medicine = observer(() => {
     setFilter(newFilter);
   };
 
-  const medicineInBalance = illnes._illneses.map((illnes) => ({
-    medicineId: illnes.MedicineId,
-    amountUsed: illnes.amount_of_pills,
-  }));
+  const medicineInBalance = illnes._illneses.reduce((acc, illnes) => {
+  const existingEntry = acc.find(entry => entry.medicineId === illnes.MedicineId);
+  if (existingEntry) {
+    existingEntry.amountUsed += illnes.amount_of_pills;
+    existingEntry.familyMembers.push(illnes.FamilyMemberId);
+  } else {
+    acc.push({
+      medicineId: illnes.MedicineId,
+      amountUsed: illnes.amount_of_pills,
+      familyMembers: [illnes.FamilyMemberId],
+    });
+  }
+    return acc;
+  }, []);
 
   const filteredMedicines = medicines._medicines
     .map((medicine) => {
       let amountUsed = 0;
       let matchingMedicine;
-
       if (filter === 'Already used') {
         matchingMedicine = medicineInBalance.find((balance) => balance.medicineId === medicine.id);
         if (matchingMedicine) {
           amountUsed = matchingMedicine.amountUsed;
         }
-      }
+      } 
 
       if (filter === 'expired' && new Date(medicine.expiration_date) >= new Date()) {
         return null;

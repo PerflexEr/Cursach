@@ -13,6 +13,24 @@ const Illnes = observer(() => {
 
   const familyMembersWithIdAndName = familyMembers._familyMembersWithIdAndName;
   const medicinesWithIdAndName = medicines._medicinesWithIdAndName;
+  
+   if (illnes._illneses.length === 0) {
+    return (
+      <Container>
+        <Box
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: '30px',
+            padding: '0 20px',
+          }}
+        >
+          <Typography variant="h6">No illnesses found.</Typography>
+        </Box>
+      </Container>
+    );
+  }
 
   return (
     <Container>
